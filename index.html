@@ -218,27 +218,31 @@ body.menu-open .sheet{transform:translateY(0);opacity:1;visibility:visible}
   mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
 }
 .marquee-track{
-  display:flex;gap:18px;width:max-content;
-  animation:marq 48s linear infinite;
+  display:flex;gap:3px;width:max-content;
+  animation:marq 52s linear infinite;
+  border-radius:18px;
+  filter:drop-shadow(0 18px 40px rgba(36,29,94,.16));
 }
 .marquee:hover .marquee-track{animation-play-state:paused}
 @keyframes marq{to{transform:translateX(-50%)}}
 .marquee-track img{
-  height:clamp(190px,26vw,300px);width:auto;border-radius:22px;
+  height:clamp(180px,24vw,280px);width:auto;border-radius:0;
   object-fit:cover;flex-shrink:0;
-  box-shadow:0 8px 26px rgba(36,29,94,.14);
-  transition:transform .45s var(--ease-apple);
 }
-.marquee-track img:hover{transform:scale(1.045)}
+.marquee-track img:first-child{border-radius:18px 0 0 18px}
 
 /* ============ SECTION SHELL ============ */
 section{scroll-margin-top:calc(var(--header-h) + 16px)}
 .sec{padding:clamp(60px,9vh,110px) 24px}
 .sec-in{max-width:1140px;margin:0 auto}
 .kicker{
-  font-size:12.5px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;
-  color:var(--cyan);text-align:center;margin-bottom:14px;
+  width:fit-content;margin:0 auto 16px;padding:7px 16px;border-radius:999px;
+  font-size:12px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--blue);text-align:center;
+  background:linear-gradient(120deg,rgba(89,195,232,.2),rgba(22,104,176,.09));
+  border:1px solid rgba(89,195,232,.4);
 }
+.tp-band .kicker,.where-grid .kicker,.acc-txt .kicker{margin:0 0 12px}
 .sec h2{
   font-size:clamp(30px,4.4vw,52px);font-weight:800;letter-spacing:-.025em;
   line-height:1.08;text-align:center;max-width:720px;margin:0 auto;
@@ -320,17 +324,17 @@ section{scroll-margin-top:calc(var(--header-h) + 16px)}
   position:relative;flex:1;min-width:0;border-radius:var(--radius-lg);overflow:hidden;
   aspect-ratio:auto;height:clamp(380px,52vh,520px);
   box-shadow:var(--shadow-soft);cursor:pointer;
-  transition:flex .55s var(--ease-apple),box-shadow .55s var(--ease-apple),transform .55s var(--ease-apple);
+  transition:flex 1.05s var(--ease-apple),box-shadow 1.05s var(--ease-apple),transform 1.05s var(--ease-apple);
 }
 @media(min-width:861px){
-  .mod-cards:hover .mod-card{flex:.82;transform:scale(.985)}
-  .mod-cards:hover .mod-card:hover{flex:1.5;transform:scale(1);box-shadow:var(--shadow-pop)}
+  .mod-cards:hover .mod-card{flex:.86;transform:scale(.99)}
+  .mod-cards:hover .mod-card:hover{flex:1.42;transform:scale(1);box-shadow:var(--shadow-pop)}
 }
 .mod-card img{
   position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
-  transition:transform .8s var(--ease-apple);
+  transition:transform 1.2s var(--ease-apple);
 }
-.mod-card:hover img{transform:scale(1.07)}
+.mod-card:hover img{transform:scale(1.05)}
 .mod-card::after{
   content:'';position:absolute;inset:0;
   background:linear-gradient(185deg,rgba(18,26,64,0) 40%,rgba(18,22,60,.86) 92%);
@@ -370,12 +374,12 @@ section{scroll-margin-top:calc(var(--header-h) + 16px)}
 .turma .tx span{font-size:12.5px;opacity:.85}
 
 /* ============ VIDEO FACADE ============ */
-.video-sec{padding-top:0}
 .vfacade{
-  position:relative;max-width:960px;margin:clamp(36px,6vh,60px) auto 0;
+  position:relative;max-width:980px;margin:clamp(38px,6vh,60px) auto 0;
   border-radius:var(--radius-lg);overflow:hidden;aspect-ratio:16/9;
   box-shadow:var(--shadow-pop);cursor:pointer;
 }
+@media(max-width:720px){.vfacade{aspect-ratio:4/3;border-radius:22px}}
 .vfacade img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .8s var(--ease-apple)}
 .vfacade:hover img{transform:scale(1.04)}
 .vfacade::after{content:'';position:absolute;inset:0;background:rgba(15,18,50,.38);transition:background .4s}
@@ -439,27 +443,12 @@ section{scroll-margin-top:calc(var(--header-h) + 16px)}
 }
 .tour-slide{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity .75s var(--ease-apple),visibility .75s}
 .tour-slide.on{opacity:1;visibility:visible}
-.tour-slide .bg{
-  position:absolute;inset:-44px;background-size:cover;background-position:center;
-  filter:blur(32px) brightness(.5) saturate(1.25);transform:scale(1.2);
-}
 .tour-slide img.main{
-  position:absolute;inset:0;margin:auto;
-  max-width:100%;max-height:100%;width:auto;height:auto;
-  object-fit:contain;z-index:2;
-  transform:scale(1.03);transition:transform 5.5s ease-out;
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;z-index:2;
+  transform:scale(1.06);transition:transform 6s ease-out;
 }
 .tour-slide.on img.main{transform:scale(1)}
-.tour-cap{
-  position:absolute;left:12px;right:12px;bottom:12px;z-index:3;
-  background:rgba(10,12,40,.55);
-  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-  border:1px solid rgba(255,255,255,.14);
-  border-radius:20px;padding:15px 76px 15px 18px;color:#fff;
-}
-.tour-cap .stop{font-size:10.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--cyan)}
-.tour-cap b{display:block;font-size:clamp(16px,2vw,20px);font-weight:800;letter-spacing:-.01em;margin-top:3px}
-.tour-cap p{font-size:13px;line-height:1.5;opacity:.85;margin-top:4px;max-width:600px}
 .tour-count{
   position:absolute;right:16px;bottom:16px;z-index:4;
   font-size:12px;font-weight:800;color:#fff;opacity:.8;letter-spacing:.08em;
@@ -493,70 +482,130 @@ section{scroll-margin-top:calc(var(--header-h) + 16px)}
   .tour-thumbs{display:none}
   .tour-dots{display:flex}
   .tour-btn{width:40px;height:40px}
-  .tour-cap{padding-right:18px}
   .tour-count{display:none}
 }
 
-/* ============ PÁGINAS DE MODALIDADE ============ */
-.detail-sec{padding:clamp(64px,9vh,110px) 0 0;overflow:hidden}
-.detail-head{padding:0 24px;text-align:center}
-.detail-photo{max-width:880px;margin:clamp(28px,5vh,48px) auto 0;padding:0 24px}
-.detail-photo .ph{
-  border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-pop);
-  aspect-ratio:16/10;position:relative;
-}
-.detail-photo .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .9s var(--ease-apple)}
-.detail-photo .ph:hover img{transform:scale(1.045)}
-.facts{
-  max-width:880px;margin:clamp(26px,4vh,42px) auto 0;padding:0 24px;
-  display:grid;grid-template-columns:repeat(4,1fr);gap:14px;text-align:center;
-}
-.fact .fk{font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--cyan)}
-.fact .fv{font-size:15px;font-weight:700;margin-top:6px;line-height:1.35}
-@media(max-width:720px){.facts{grid-template-columns:repeat(2,1fr);gap:20px 10px}}
-.quote-band{
-  margin-top:clamp(40px,6vh,64px);padding:clamp(46px,7vh,80px) 24px;
-  text-align:center;color:#fff;position:relative;overflow:hidden;
-}
-.quote-band::before{
-  content:'';position:absolute;inset:0;
-  background:
-    radial-gradient(620px 300px at 12% 0%, rgba(255,255,255,.22), transparent 60%),
-    radial-gradient(520px 280px at 90% 100%, rgba(255,255,255,.16), transparent 60%);
-}
-.quote-band p{
-  position:relative;z-index:2;max-width:660px;margin:0 auto;
-  font-size:clamp(19px,2.6vw,27px);font-weight:700;line-height:1.45;letter-spacing:-.015em;
-}
+/* ============ GRADIENTES DA PALETA ============ */
 .g-cyan{background:linear-gradient(120deg,#1d8fc4,var(--cyan) 60%,#7fd4f0)}
 .g-blue{background:linear-gradient(120deg,var(--blue-deep),var(--blue) 55%,#2b9fd4)}
 .g-ink{background:linear-gradient(120deg,var(--ink),#3a3086 55%,var(--blue))}
 .g-orange{background:linear-gradient(120deg,var(--orange-deep),var(--orange) 60%,#ffb95e)}
-.detail-how{max-width:1000px;margin:0 auto;padding:clamp(50px,8vh,84px) 24px 0}
-.detail-how h3{
-  font-size:clamp(24px,3.2vw,36px);font-weight:800;letter-spacing:-.02em;text-align:center;
-  background:linear-gradient(150deg,var(--ink) 35%,var(--blue) 95%);
+
+/* ============ GALERIA DENTRO DOS CARDS ============ */
+.cg{position:absolute;inset:0}
+.cg img{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  opacity:0;transition:opacity .65s var(--ease-apple),transform 1.1s var(--ease-apple);
+}
+.cg img.on{opacity:1}
+.cg-nav{
+  position:absolute;top:12px;right:12px;z-index:3;display:flex;gap:6px;
+  opacity:0;transition:opacity .35s var(--ease-apple);
+}
+.turma:hover .cg-nav,.mod-card:hover .cg-nav{opacity:1}
+.cg-nav button{
+  width:30px;height:30px;border-radius:50%;color:#fff;
+  background:rgba(10,12,40,.45);border:1px solid rgba(255,255,255,.28);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  display:flex;align-items:center;justify-content:center;
+  transition:background .25s,transform .25s;
+}
+.cg-nav button:hover{background:rgba(10,12,40,.7);transform:scale(1.08)}
+.cg-count{
+  position:absolute;top:16px;left:14px;z-index:3;
+  font-size:11px;font-weight:800;color:#fff;letter-spacing:.06em;
+  background:rgba(10,12,40,.45);padding:4px 10px;border-radius:999px;
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  opacity:0;transition:opacity .35s var(--ease-apple);
+}
+.turma:hover .cg-count,.mod-card:hover .cg-count{opacity:1}
+@media(max-width:860px){.cg-nav,.cg-count{opacity:1}}
+
+/* ============ MODAL DE MODALIDADE (Apple/Airbnb) ============ */
+.dmodal{
+  position:fixed;inset:0;z-index:250;
+  display:flex;align-items:center;justify-content:center;padding:min(4vw,28px);
+  background:rgba(12,14,42,.46);
+  backdrop-filter:blur(16px) saturate(1.25);-webkit-backdrop-filter:blur(16px) saturate(1.25);
+  opacity:0;visibility:hidden;transition:opacity .4s var(--ease-apple),visibility .4s;
+}
+.dmodal.open{opacity:1;visibility:visible}
+.dm-card{
+  position:relative;width:min(960px,100%);height:min(82vh,680px);
+  background:#fff;border-radius:30px;overflow:hidden;
+  box-shadow:0 40px 120px rgba(10,12,40,.5);
+  display:grid;grid-template-columns:1.05fr 1fr;
+  transform:scale(.93) translateY(20px);
+  transition:transform .5s var(--ease-apple);
+}
+.dmodal.open .dm-card{transform:scale(1) translateY(0)}
+.dm-gal{position:relative;background:var(--ink);overflow:hidden;touch-action:pan-y}
+.dm-track{position:absolute;inset:0;display:flex;transition:transform .55s var(--ease-apple)}
+.dm-track img{width:100%;height:100%;object-fit:cover;flex-shrink:0}
+.dm-nav{
+  position:absolute;top:50%;transform:translateY(-50%);z-index:3;
+  width:40px;height:40px;border-radius:50%;color:#fff;
+  background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  display:flex;align-items:center;justify-content:center;
+  transition:background .25s,transform .25s;
+}
+.dm-nav:hover{background:rgba(255,255,255,.42)}
+.dm-nav.prev{left:12px}.dm-nav.next{right:12px}
+.dm-dots{position:absolute;left:0;right:0;bottom:14px;z-index:3;display:flex;gap:6px;justify-content:center}
+.dm-dots span{width:7px;height:7px;border-radius:99px;background:rgba(255,255,255,.45);transition:all .3s var(--ease-apple)}
+.dm-dots span.on{width:20px;background:#fff}
+.dm-body{padding:clamp(24px,3.4vw,38px);overflow-y:auto;display:flex;flex-direction:column;gap:15px}
+.dm-kicker{
+  width:fit-content;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--blue);padding:6px 13px;border-radius:999px;
+  background:linear-gradient(120deg,rgba(89,195,232,.2),rgba(22,104,176,.1));
+  border:1px solid rgba(89,195,232,.4);
+}
+.dm-body h3{
+  font-size:clamp(25px,3vw,34px);font-weight:800;letter-spacing:-.025em;line-height:1.05;
+  background:linear-gradient(150deg,var(--ink) 35%,var(--blue));
   -webkit-background-clip:text;background-clip:text;color:transparent;
 }
-.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:clamp(28px,4vh,40px)}
-.step{
-  background:linear-gradient(165deg,#fff,var(--mist));
-  border:1px solid rgba(36,29,94,.07);border-radius:var(--radius-md);padding:24px;
-  transition:transform .4s var(--ease-apple),box-shadow .4s var(--ease-apple);
+.dm-chips{display:flex;flex-wrap:wrap;gap:8px}
+.dm-chips span{font-size:12px;font-weight:700;padding:7px 13px;border-radius:999px;background:var(--mist);color:var(--blue-deep)}
+.dm-quote{
+  border-radius:18px;padding:18px 20px;color:#fff;position:relative;overflow:hidden;
+  font-size:15.5px;font-weight:700;line-height:1.5;letter-spacing:-.01em;
 }
-.step:hover{transform:translateY(-5px);box-shadow:var(--shadow-soft)}
-.step .n{font-size:12px;font-weight:800;color:var(--cyan)}
-.step b{display:block;font-size:16.5px;font-weight:800;letter-spacing:-.01em;margin:8px 0}
-.step p{font-size:14px;line-height:1.6;color:var(--ink-soft)}
-@media(max-width:720px){.steps{grid-template-columns:1fr}}
-.detail-ctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:clamp(30px,5vh,46px);padding:0 24px}
-.btn-ghost{
-  display:inline-flex;align-items:center;justify-content:center;
-  padding:13px 24px;border-radius:999px;font-size:14.5px;font-weight:700;
-  border:1.5px solid rgba(36,29,94,.16);color:var(--ink);background:#fff;
-  transition:all .3s var(--ease-apple);
+.dm-quote::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(320px 150px at 10% 0%,rgba(255,255,255,.25),transparent 60%);
 }
-.btn-ghost:hover{border-color:var(--cyan);background:var(--mist);transform:translateY(-2px)}
+.dm-quote span{position:relative;z-index:2}
+.dm-steps{display:flex;flex-direction:column;gap:13px}
+.dm-step{display:flex;gap:12px;align-items:flex-start}
+.dm-step .n{
+  width:26px;height:26px;border-radius:9px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--cyan),var(--blue));color:#fff;
+  font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;
+}
+.dm-step b{font-size:14.5px;font-weight:800;letter-spacing:-.01em;display:block}
+.dm-step p{font-size:13.5px;color:var(--ink-soft);line-height:1.5;margin-top:2px}
+.dm-body .cta-btn{margin-top:auto;width:100%}
+.dm-close{
+  position:absolute;top:14px;right:14px;z-index:5;width:40px;height:40px;border-radius:50%;
+  background:rgba(10,12,40,.45);color:#fff;font-size:16px;
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  display:flex;align-items:center;justify-content:center;
+  transition:background .25s,transform .25s;
+}
+.dm-close:hover{background:rgba(10,12,40,.72);transform:rotate(90deg)}
+@media(max-width:860px){
+  .dmodal{padding:0;align-items:flex-end}
+  .dm-card{
+    grid-template-columns:1fr;grid-template-rows:42svh 1fr;
+    width:100%;height:auto;max-height:92svh;border-radius:26px 26px 0 0;
+    transform:translateY(48px);
+  }
+  .dmodal.open .dm-card{transform:translateY(0)}
+  .dm-body .cta-btn{margin-top:6px}
+}
 
 /* ============ ACESSIBILIDADE (com foto da rampa) ============ */
 .acc-grid{
@@ -721,15 +770,15 @@ footer{background:var(--ink);color:#c9c3f0;margin-top:clamp(50px,8vh,90px)}
           <svg class="chev" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
         </a>
         <div class="nav-drop" id="natacaoDrop">
-          <a class="drop-item" href="#nat-baby"><span class="num">01</span><span><b>Natação Baby</b><span>6 meses a 3 anos</span></span></a>
-          <a class="drop-item" href="#nat-infantil"><span class="num">02</span><span><b>Natação Infantil</b><span>4 a 12 anos</span></span></a>
-          <a class="drop-item" href="#nat-teen"><span class="num">03</span><span><b>Natação Teen</b><span>13 a 16 anos</span></span></a>
-          <a class="drop-item" href="#nat-adulto"><span class="num">04</span><span><b>Natação Adulto</b><span>Do zero ao aperfeiçoamento</span></span></a>
-          <a class="drop-item" href="#nat-individual"><span class="num">05</span><span><b>Natação Individualizada</b><span>Uma professora, um aluno</span></span></a>
+          <a class="drop-item" href="#natacao" data-mod="baby"><span class="num">01</span><span><b>Natação Baby</b><span>6 meses a 3 anos</span></span></a>
+          <a class="drop-item" href="#natacao" data-mod="infantil"><span class="num">02</span><span><b>Natação Infantil</b><span>4 a 12 anos</span></span></a>
+          <a class="drop-item" href="#natacao" data-mod="teen"><span class="num">03</span><span><b>Natação Teen</b><span>13 a 16 anos</span></span></a>
+          <a class="drop-item" href="#natacao" data-mod="adulto"><span class="num">04</span><span><b>Natação Adulto</b><span>Do zero ao aperfeiçoamento</span></span></a>
+          <a class="drop-item" href="#natacao" data-mod="individual"><span class="num">05</span><span><b>Natação Individualizada</b><span>Uma professora, um aluno</span></span></a>
         </div>
       </div>
-      <div><a class="nav-link" href="#hidroginastica">Hidroginástica</a></div>
-      <div><a class="nav-link" href="#hidroterapia">Hidroterapia</a></div>
+      <div><a class="nav-link" href="#modalidades" data-mod="hidroginastica">Hidroginástica</a></div>
+      <div><a class="nav-link" href="#modalidades" data-mod="hidroterapia">Hidroterapia</a></div>
       <div><a class="nav-link" href="#ambientes">Ambientes</a></div>
       <div><a class="nav-link" href="#acessibilidade">Acessibilidade</a></div>
       <div><a class="nav-link" href="#onde">Onde estamos</a></div>
@@ -742,14 +791,14 @@ footer{background:var(--ink);color:#c9c3f0;margin-top:clamp(50px,8vh,90px)}
 <!-- MOBILE SHEET -->
 <div class="sheet" id="sheet">
   <div class="group-label">Natação</div>
-  <a class="s-link" href="#nat-baby"><span class="num">01</span>Natação Baby<small>6 meses a 3 anos</small></a>
-  <a class="s-link" href="#nat-infantil"><span class="num">02</span>Natação Infantil<small>4 a 12 anos</small></a>
-  <a class="s-link" href="#nat-teen"><span class="num">03</span>Natação Teen<small>13 a 16 anos</small></a>
-  <a class="s-link" href="#nat-adulto"><span class="num">04</span>Natação Adulto<small>Do zero ao topo</small></a>
-  <a class="s-link" href="#nat-individual"><span class="num">05</span>Individualizada<small>1 professora, 1 aluno</small></a>
+  <a class="s-link" href="#natacao" data-mod="baby"><span class="num">01</span>Natação Baby<small>6 meses a 3 anos</small></a>
+  <a class="s-link" href="#natacao" data-mod="infantil"><span class="num">02</span>Natação Infantil<small>4 a 12 anos</small></a>
+  <a class="s-link" href="#natacao" data-mod="teen"><span class="num">03</span>Natação Teen<small>13 a 16 anos</small></a>
+  <a class="s-link" href="#natacao" data-mod="adulto"><span class="num">04</span>Natação Adulto<small>Do zero ao topo</small></a>
+  <a class="s-link" href="#natacao" data-mod="individual"><span class="num">05</span>Individualizada<small>1 professora, 1 aluno</small></a>
   <div class="group-label">Mais</div>
-  <a class="s-link" href="#hidroginastica">Hidroginástica</a>
-  <a class="s-link" href="#hidroterapia">Hidroterapia</a>
+  <a class="s-link" href="#modalidades" data-mod="hidroginastica">Hidroginástica</a>
+  <a class="s-link" href="#modalidades" data-mod="hidroterapia">Hidroterapia</a>
   <a class="s-link" href="#ambientes">Ambientes</a>
   <a class="s-link" href="#acessibilidade">Acessibilidade</a>
   <a class="s-link" href="#onde">Onde estamos</a>
@@ -764,10 +813,17 @@ footer{background:var(--ink);color:#c9c3f0;margin-top:clamp(50px,8vh,90px)}
   <div class="blob b2" aria-hidden="true"></div>
   <div class="blob b3" aria-hidden="true"></div>
   <h1>Do primeiro mergulho<br>à recuperação</h1>
-  <p>Natação, hidroginástica e hidroterapia em piscina aquecida, no centro de Osasco. Uma conversa no WhatsApp e você já sabe o horário com vaga.</p>
+  <p>Piscina aquecida no centro de Osasco — do bebê de 6 meses à reabilitação. Uma mensagem, e sua primeira aula está marcada.</p>
   <div class="hero-ctas">
     <a class="cta-btn" href="https://wa.me/5511916934719?text=Ol%C3%A1!%20Quero%20agendar%20uma%20aula%20experimental." target="_blank" rel="noopener">Agendar aula experimental</a>
     <button class="btn-dark" id="verModsBtn">Ver as modalidades</button>
+  </div>
+  <div class="vfacade reveal-s" id="videoFacade" role="button" tabindex="0" aria-label="Assistir vídeo: aperte o play e entre na piscina">
+    <img src="img/wa-06.jpg" alt="Famílias e bebês na piscina da Acqua Fisio Fortunata">
+    <div class="vlabel">
+      <b>Aperte o play e entre na piscina</b>
+      <div class="play-btn"></div>
+    </div>
   </div>
   <div class="swipe-hint">
     deslize para conhecer
@@ -818,18 +874,16 @@ footer{background:var(--ink);color:#c9c3f0;margin-top:clamp(50px,8vh,90px)}
     <div class="kicker reveal">Modalidades</div>
     <h2 class="reveal">O que você quer fazer na água?</h2>
     <div class="mod-cards" id="modCards">
-      <a class="mod-card reveal" href="#natacao">
-        <img src="img/baby-2.jpg" alt="Roda de bebês e acompanhantes na aula de natação baby">
+      <a class="mod-card reveal" href="#natacao" data-gal="natacao" aria-label="Ver as turmas de natação">
         <div class="info">
           <b>Aprender a nadar</b>
-          <span>Baby, infantil, teen, adulto e individualizada</span>
+          <span>Do bebê ao adulto, cada um na sua turma</span>
           <span class="go">Ver as cinco turmas
             <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M1 6h13M10 1l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </span>
         </div>
       </a>
-      <a class="mod-card reveal" href="#hidroginastica">
-        <img src="img/hidrog-1.jpg" alt="Turma de hidroginástica com espaguetes coloridos na piscina aquecida">
+      <a class="mod-card reveal" href="#modalidades" data-mod="hidroginastica" aria-label="Ver detalhes da hidroginástica">
         <div class="info">
           <b>Se movimentar sem dor</b>
           <span>Hidroginástica para adultos e idosos</span>
@@ -838,11 +892,10 @@ footer{background:var(--ink);color:#c9c3f0;margin-top:clamp(50px,8vh,90px)}
           </span>
         </div>
       </a>
-      <a class="mod-card reveal" href="#hidroterapia">
-        <img src="img/hidrot-1.jpg" alt="Fisioterapeuta dentro da água em sessão de hidroterapia">
+      <a class="mod-card reveal" href="#modalidades" data-mod="hidroterapia" aria-label="Ver detalhes da hidroterapia">
         <div class="info">
           <b>Tratar e reabilitar</b>
-          <span>Hidroterapia e natação terapêutica</span>
+          <span>Hidroterapia com fisioterapeuta na água</span>
           <span class="go">Ver a hidroterapia
             <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M1 6h13M10 1l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </span>
@@ -857,28 +910,13 @@ footer{background:var(--ink);color:#c9c3f0;margin-top:clamp(50px,8vh,90px)}
   <div class="sec-in">
     <div class="kicker reveal">Natação</div>
     <h2 class="reveal">Uma turma para cada fase da vida</h2>
+    <p class="sec-sub reveal">Toque em uma turma e veja como funciona por dentro.</p>
     <div class="turmas-grid">
-      <a class="turma reveal" href="#nat-baby"><img src="img/baby-5.jpg" alt="Professora segurando bebê na aula de natação baby"><div class="tx"><b>Baby</b><span>6 meses a 3 anos</span></div></a>
-      <a class="turma reveal" href="#nat-infantil"><img src="img/wa-08.jpg" alt="Criança brincando na aula de natação infantil"><div class="tx"><b>Infantil</b><span>4 a 12 anos</span></div></a>
-      <a class="turma reveal" href="#nat-teen"><img src="img/teen.jpg" alt="Adolescentes nadando com prancha nas raias"><div class="tx"><b>Teen</b><span>13 a 16 anos</span></div></a>
-      <a class="turma reveal" href="#nat-adulto"><img src="img/adulto-2.jpg" alt="Adultos nadando crawl na piscina aquecida"><div class="tx"><b>Adulto</b><span>Do zero ao aperfeiçoamento</span></div></a>
-      <a class="turma reveal" href="#nat-individual"><img src="img/wa-02.jpg" alt="Aula individualizada de natação"><div class="tx"><b>Individualizada</b><span>Uma professora, um aluno</span></div></a>
-    </div>
-  </div>
-</section>
-
-<!-- DETALHES DAS MODALIDADES (gerado por JS) -->
-<div id="modDetails"></div>
-
-<!-- VIDEO -->
-<section class="sec video-sec snap" id="video">
-  <div class="sec-in">
-    <div class="vfacade reveal" id="videoFacade" role="button" tabindex="0" aria-label="Assistir vídeo: um minuto dentro da nossa piscina">
-      <img src="img/wa-06.jpg" alt="Famílias e bebês na piscina da Acqua Fisio Fortunata">
-      <div class="vlabel">
-        <b>Um minuto dentro da nossa piscina</b>
-        <div class="play-btn"></div>
-      </div>
+      <a class="turma reveal" href="#natacao" data-mod="baby" aria-label="Ver detalhes da natação baby"><div class="tx"><b>Baby</b><span>6 meses a 3 anos</span></div></a>
+      <a class="turma reveal" href="#natacao" data-mod="infantil" aria-label="Ver detalhes da natação infantil"><div class="tx"><b>Infantil</b><span>4 a 12 anos</span></div></a>
+      <a class="turma reveal" href="#natacao" data-mod="teen" aria-label="Ver detalhes da natação teen"><div class="tx"><b>Teen</b><span>13 a 16 anos</span></div></a>
+      <a class="turma reveal" href="#natacao" data-mod="adulto" aria-label="Ver detalhes da natação adulto"><div class="tx"><b>Adulto</b><span>Do zero ao aperfeiçoamento</span></div></a>
+      <a class="turma reveal" href="#natacao" data-mod="individual" aria-label="Ver detalhes da aula individualizada"><div class="tx"><b>Individualizada</b><span>Uma professora, um aluno</span></div></a>
     </div>
   </div>
 </section>
@@ -887,8 +925,8 @@ footer{background:var(--ink);color:#c9c3f0;margin-top:clamp(50px,8vh,90px)}
 <section class="sec tour-sec snap" id="ambientes">
   <div class="sec-in">
     <div class="kicker reveal">Tour virtual</div>
-    <h2 class="reveal">Caminhe pela nossa casa</h2>
-    <p class="sec-sub reveal">Da calçada até a beira da piscina, em cinco paradas. Use as setas — ou deixe o tour andar sozinho.</p>
+    <h2 class="reveal">Conhecendo a nossa casa</h2>
+    <p class="sec-sub reveal">Da calçada à beira da piscina, em cinco paradas.</p>
     <div class="tour reveal-s">
       <div class="tour-stage" id="tourStage">
         <button class="tour-btn prev" id="tourPrev" aria-label="Parada anterior">
@@ -1003,6 +1041,11 @@ footer{background:var(--ink);color:#c9c3f0;margin-top:clamp(50px,8vh,90px)}
   </a>
 </div>
 
+<!-- MODAL DE MODALIDADE -->
+<div class="dmodal" id="dmodal" aria-hidden="true">
+  <div class="dm-card" role="dialog" aria-modal="true" id="dmCard"></div>
+</div>
+
 <!-- VIDEO MODAL -->
 <div class="vmodal" id="vmodal" aria-hidden="true">
   <button class="close" id="vmodalClose" aria-label="Fechar vídeo">✕</button>
@@ -1012,10 +1055,10 @@ footer{background:var(--ink);color:#c9c3f0;margin-top:clamp(50px,8vh,90px)}
 <script>
 /* ===== dados da estrutura ===== */
 const STRUCT = [
-  {t:'Piscina aquecida o ano inteiro', p:'Coberta e climatizada. Ninguém desmarca por causa do frio, e a água morna solta o corpo antes do primeiro exercício.', img:'img/piscina-vazia.jpg'},
-  {t:'Turmas por faixa de idade', p:'Do bebê de 6 meses ao adulto. Cada grupo nada com quem está na mesma fase — e evolui junto.', img:'img/baby-1.jpg'},
-  {t:'Fisioterapeutas na água com você', p:'Na hidroterapia, o profissional entra na piscina junto. Cada movimento é acompanhado de perto, com segurança.', img:'img/hidrot-3.jpg'},
-  {t:'Uma equipe que chama pelo nome', p:'Escola de bairro no melhor sentido: aqui a recepção sabe quem você é e a professora percebe sua evolução aula a aula.', img:'img/equipe.jpg'}
+  {t:'Piscina aquecida o ano inteiro', p:'Coberta e climatizada. Frio não é desculpa — a água morna te espera.', img:'img/piscina-vazia.jpg'},
+  {t:'Turmas por faixa de idade', p:'Cada um nada com quem vive a mesma fase. Ninguém fica para trás.', img:'img/baby-1.jpg'},
+  {t:'Fisioterapeutas dentro da água', p:'Na hidroterapia, o profissional entra junto. Cada movimento, acompanhado.', img:'img/hidrot-3.jpg'},
+  {t:'Aqui a gente sabe seu nome', p:'A recepção te reconhece. A professora percebe sua evolução, aula a aula.', img:'img/equipe.jpg'}
 ];
 
 /* ===== estrutura: desktop accordion ===== */
@@ -1155,10 +1198,7 @@ let tourIdx = 0, tourTimer = null;
 TOUR.forEach((a,i)=>{
   const s=document.createElement('div');
   s.className='tour-slide'+(i===0?' on':'');
-  s.innerHTML=`
-    <div class="bg" style="background-image:url('${a.img}')"></div>
-    <img class="main" src="${a.img}" alt="${a.t} — Acqua Fisio Fortunata" loading="lazy">
-    <div class="tour-cap"><span class="stop">Parada 0${i+1}</span><b>${a.t}</b><p>${a.p}</p></div>`;
+  s.innerHTML=`<img class="main" src="${a.img}" alt="${a.t} — Acqua Fisio Fortunata" loading="lazy">`;
   tourStage.insertBefore(s, tourStage.querySelector('.tour-btn'));
   const th=document.createElement('button');
   th.innerHTML=`<img src="${a.img}" alt="" loading="lazy">`;
@@ -1198,95 +1238,203 @@ tourStage.addEventListener('touchend',e=>{
   tSwipeX=null;startTour();
 },{passive:true});
 
-/* ===== seções de detalhe por modalidade ===== */
+/* ===== modalidades: dados + galerias + modal ===== */
 const WA = 'https://wa.me/5511916934719?text=';
-const DETAILS = [
-  {id:'nat-baby', kicker:'Natação para bebês', title:'Natação Baby', img:'img/baby-3.jpg',
-   alt:'Bebês flutuando com apoio dos pais e professoras na piscina aquecida',
-   facts:[['Idade','6 meses a 3 anos'],['Formato','Turma com acompanhante'],['Água','Piscina aquecida'],['Início','Aula experimental']],
-   grad:'g-cyan',
-   quote:'O primeiro contato com a água acontece no colo, no ritmo do bebê e com a professora ao alcance da mão.',
-   steps:[['Adaptação ao meio aquático','O bebê aprende a ficar confortável na água antes de qualquer exercício.'],
-          ['No tempo dele','Cada etapa avança quando o bebê está pronto, sem forçar nada.'],
-          ['Entrada e saída seguras','A rampa e os degraus facilitam a chegada até a água com o bebê no colo.']],
-   cta:'Falar sobre a natação baby', wa:'a natação baby'},
-  {id:'nat-infantil', kicker:'Natação para crianças', title:'Natação Infantil', img:'img/infantil.jpg',
-   alt:'Criança sorrindo com prancha na aula de natação infantil',
-   facts:[['Idade','4 a 12 anos'],['Formato','Turmas por nível'],['Água','Piscina aquecida'],['Início','Aula experimental']],
-   grad:'g-blue',
-   quote:'A criança aprende brincando — e, sem perceber, ganha técnica, fôlego e confiança.',
-   steps:[['Ambientação e segurança','Primeiro a criança domina a flutuação e a respiração, com jogos na água.'],
-          ['Técnica em forma de brincadeira','Os quatro nados entram aos poucos, sempre com material lúdico.'],
-          ['Evolução por níveis','Turmas separadas por fase: cada conquista leva ao próximo desafio.']],
-   cta:'Falar sobre a natação infantil', wa:'a natação infantil'},
-  {id:'nat-teen', kicker:'Natação para adolescentes', title:'Natação Teen', img:'img/teen.jpg',
-   alt:'Adolescentes treinando com prancha nas raias da piscina',
-   facts:[['Idade','13 a 16 anos'],['Formato','Turma da mesma idade'],['Água','Piscina aquecida'],['Início','Aula experimental']],
-   grad:'g-ink',
-   quote:'Na adolescência a piscina vira treino de verdade: técnica, condicionamento e uma pausa do celular.',
-   steps:[['Aperfeiçoamento dos nados','Crawl, costas, peito e borboleta com correção técnica de perto.'],
-          ['Condicionamento físico','Séries que constroem fôlego, postura e resistência.'],
-          ['Turma que puxa junto','Nadar com gente da mesma idade motiva a não faltar.']],
-   cta:'Falar sobre a natação teen', wa:'a natação teen'},
-  {id:'nat-adulto', kicker:'Natação para adultos', title:'Natação Adulto', img:'img/adulto-3.jpg',
-   alt:'Adultos nadando em raias com professora orientando dentro da água',
-   facts:[['Idade','A partir de 17 anos'],['Formato','Do zero ao aperfeiçoamento'],['Água','Piscina aquecida'],['Início','Aula experimental']],
-   grad:'g-cyan',
-   quote:'Nunca é tarde para aprender: boa parte dos nossos alunos adultos começou do absoluto zero.',
-   steps:[['Perder o medo da água','Adaptação respeitosa, sem pressa e sem plateia.'],
-          ['Respiração e técnica','A base bem-feita destrava o nado confortável e eficiente.'],
-          ['No seu ritmo','Do primeiro comprimento ao treino de resistência, cada um na sua raia.']],
-   cta:'Falar sobre a natação adulto', wa:'a natação adulto'},
-  {id:'nat-individual', kicker:'Atenção exclusiva', title:'Natação Individualizada', img:'img/wa-02.jpg',
-   alt:'Professora em aula individual de natação na piscina aquecida',
-   facts:[['Idade','Todas as idades'],['Formato','Uma professora, um aluno'],['Água','Piscina aquecida'],['Início','Avaliação inicial']],
-   grad:'g-orange',
-   quote:'Uma professora só para você: o caminho mais rápido para evoluir — e o mais acolhedor para quem precisa de atenção especial.',
-   steps:[['Avaliação individual','Entendemos o objetivo, o histórico e o ponto de partida.'],
-          ['Plano sob medida','Cada aula é montada para a sua necessidade específica.'],
-          ['Evolução acompanhada','A mesma professora acompanha seu progresso aula a aula.']],
-   cta:'Falar sobre a aula individualizada', wa:'a natação individualizada'},
-  {id:'hidroginastica', kicker:'Movimento sem impacto', title:'Hidroginástica', img:'img/hidro-secao.jpg',
-   alt:'Turma de hidroginástica se exercitando na piscina aquecida',
-   facts:[['Idade','Adultos e idosos'],['Formato','Turmas animadas'],['Água','Piscina aquecida'],['Início','Aula experimental']],
-   grad:'g-blue',
-   quote:'Fortalece o corpo, protege as articulações — e ainda rende as melhores risadas da semana.',
-   steps:[['Aquecimento na água','Movimentos leves para soltar o corpo na água morna.'],
-          ['Exercícios com acessórios','Espaguetes, halteres e pranchas para força e equilíbrio sem impacto.'],
-          ['Alongamento e conversa','A aula termina leve — e a turma vira amiga rapidinho.']],
-   cta:'Falar sobre a hidroginástica', wa:'a hidroginástica'},
-  {id:'hidroterapia', kicker:'Reabilitação na água', title:'Hidroterapia', img:'img/hidrot-2.jpg',
-   alt:'Fisioterapeuta conduzindo sessão de hidroterapia com criança em plataforma flutuante',
-   facts:[['Idade','Todas as idades'],['Formato','Individual, com fisioterapeuta'],['Água','Piscina aquecida'],['Início','Avaliação inicial']],
-   grad:'g-ink',
-   quote:'O fisioterapeuta entra na água com você: cada movimento é guiado, seguro e pensado para a sua recuperação.',
-   steps:[['Avaliação fisioterapêutica','Conversa e avaliação para montar o plano de reabilitação.'],
-          ['Sessões dentro da água','O profissional trabalha ao seu lado, com apoio e materiais adaptados.'],
-          ['Evolução monitorada','Cada sessão registra o progresso rumo ao objetivo combinado.']],
-   cta:'Falar sobre a hidroterapia', wa:'a hidroterapia'}
-];
-const detailsHost = document.getElementById('modDetails');
-DETAILS.forEach(d=>{
-  const sec=document.createElement('section');
-  sec.className='detail-sec snap';
-  sec.id=d.id;
-  sec.innerHTML=`
-    <div class="detail-head">
-      <div class="kicker reveal">${d.kicker}</div>
-      <h2 class="reveal">${d.title}</h2>
+const MODS = {
+  baby:{
+    kicker:'Natação · 6 meses a 3 anos', title:'Natação Baby',
+    imgs:['img/baby-5.jpg','img/baby-2.jpg','img/baby-3.jpg','img/baby-6.jpg','img/baby-4.jpg','img/baby-1.jpg'],
+    alt:'Aula de natação baby na piscina aquecida',
+    chips:['Turma com acompanhante','Piscina aquecida','Aula experimental'],
+    grad:'g-cyan',
+    quote:'O primeiro mergulho acontece no colo — no ritmo do bebê.',
+    steps:[['Adaptação','Água morna, colo e brincadeira. Nada é forçado.'],
+           ['Confiança','Flutuar, submergir, sorrir. Uma conquista por aula.'],
+           ['Segurança','Rampa e degraus para entrar com o bebê no colo.']],
+    cta:'Agendar aula experimental do baby', wa:'a natação baby'},
+  infantil:{
+    kicker:'Natação · 4 a 12 anos', title:'Natação Infantil',
+    imgs:['img/infantil.jpg','img/wa-08.jpg','img/infantil-teen.jpg','img/wa-09.jpg'],
+    alt:'Aula de natação infantil',
+    chips:['Turmas por nível','Piscina aquecida','Aula experimental'],
+    grad:'g-blue',
+    quote:'Aqui a criança aprende brincando. A técnica vem junto — sem perceber.',
+    steps:[['Ambientação','Jogos que ensinam a respirar e flutuar.'],
+           ['Técnica lúdica','Os quatro nados, em formato de brincadeira.'],
+           ['Níveis','Turmas por fase. Evolução que dá para ver.']],
+    cta:'Agendar aula experimental infantil', wa:'a natação infantil'},
+  teen:{
+    kicker:'Natação · 13 a 16 anos', title:'Natação Teen',
+    imgs:['img/teen.jpg','img/infantil-teen.jpg','img/adulto-2.jpg'],
+    alt:'Adolescentes treinando natação nas raias',
+    chips:['Turma da mesma idade','Piscina aquecida','Aula experimental'],
+    grad:'g-ink',
+    quote:'Treino de verdade: técnica, fôlego — e uma pausa do celular.',
+    steps:[['Quatro nados','Correção técnica de perto, nado a nado.'],
+           ['Condicionamento','Séries que constroem resistência.'],
+           ['Turma unida','Idade parecida, motivação em dobro.']],
+    cta:'Agendar aula experimental teen', wa:'a natação teen'},
+  adulto:{
+    kicker:'Natação · a partir de 17 anos', title:'Natação Adulto',
+    imgs:['img/adulto-2.jpg','img/adulto-3.jpg','img/adulto-1.jpg','img/wa-03.jpg'],
+    alt:'Adultos nadando na piscina aquecida',
+    chips:['Do zero ao aperfeiçoamento','Piscina aquecida','Aula experimental'],
+    grad:'g-cyan',
+    quote:'Boa parte dos nossos adultos começou do zero. Você também pode.',
+    steps:[['Sem medo','Adaptação sem pressa — e sem plateia.'],
+           ['Respiração','A base que destrava o nado confortável.'],
+           ['Seu ritmo','Do primeiro comprimento ao treino longo.']],
+    cta:'Agendar aula experimental adulto', wa:'a natação adulto'},
+  individual:{
+    kicker:'Natação · todas as idades', title:'Natação Individualizada',
+    imgs:['img/wa-02.jpg','img/hidrot-7.jpg','img/baby-4.jpg'],
+    alt:'Aula individualizada de natação',
+    chips:['Uma professora, um aluno','Piscina aquecida','Avaliação inicial'],
+    grad:'g-orange',
+    quote:'Uma professora só para você. Evolução pelo menor caminho.',
+    steps:[['Avaliação','Objetivo e ponto de partida, mapeados.'],
+           ['Sob medida','Cada aula desenhada para você.'],
+           ['Acompanhamento','A mesma professora, aula após aula.']],
+    cta:'Falar sobre a aula individualizada', wa:'a natação individualizada'},
+  hidroginastica:{
+    kicker:'Hidroginástica · adultos e idosos', title:'Hidroginástica',
+    imgs:['img/hidrog-1.jpg','img/hidro-secao.jpg','img/hidrog-2.jpg','img/hidro-adultos.jpg','img/idosos-hidro.jpg'],
+    alt:'Turma de hidroginástica na piscina aquecida',
+    chips:['Turmas animadas','Zero impacto','Aula experimental'],
+    grad:'g-blue',
+    quote:'Fortalece sem impacto — e rende as melhores risadas da semana.',
+    steps:[['Aquecimento','Movimentos leves na água morna.'],
+           ['Força','Espaguetes e halteres, sem castigar as articulações.'],
+           ['Leveza','Alongamento e conversa para fechar.']],
+    cta:'Agendar aula experimental de hidro', wa:'a hidroginástica'},
+  hidroterapia:{
+    kicker:'Hidroterapia · todas as idades', title:'Hidroterapia',
+    imgs:['img/hidrot-2.jpg','img/hidrot-1.jpg','img/hidrot-3.jpg','img/hidrot-5.jpg','img/hidrot-4.jpg','img/hidrot-7.jpg'],
+    alt:'Sessão de hidroterapia com fisioterapeuta na água',
+    chips:['Individual, com fisioterapeuta','Piscina aquecida','Avaliação inicial'],
+    grad:'g-ink',
+    quote:'O fisioterapeuta entra na água com você. Cada movimento, guiado.',
+    steps:[['Avaliação','Plano de reabilitação só seu.'],
+           ['Na água','Sessões lado a lado com o profissional.'],
+           ['Evolução','Progresso registrado a cada sessão.']],
+    cta:'Agendar avaliação de hidroterapia', wa:'a hidroterapia'}
+};
+/* galeria extra para o card "Aprender a nadar" */
+const GALS = { natacao:['img/baby-2.jpg','img/wa-08.jpg','img/teen.jpg','img/adulto-2.jpg'] };
+
+/* ===== galeria dentro dos cards (clique/arraste para trocar a foto) ===== */
+function initCardGallery(card, imgs, alt){
+  const cg=document.createElement('div');cg.className='cg';
+  imgs.forEach((src,i)=>{
+    const im=document.createElement('img');
+    im.src=src;im.alt=alt;im.loading='lazy';
+    if(i===0)im.classList.add('on');
+    cg.appendChild(im);
+  });
+  card.prepend(cg);
+  if(imgs.length<2) return;
+  let idx=0;
+  const count=document.createElement('span');
+  count.className='cg-count';count.textContent=`1/${imgs.length}`;
+  const nav=document.createElement('div');
+  nav.className='cg-nav';
+  nav.innerHTML=`
+    <button data-d="-1" aria-label="Foto anterior"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <button data-d="1" aria-label="Próxima foto"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>`;
+  card.append(count,nav);
+  function go(d){
+    idx=(idx+d+imgs.length)%imgs.length;
+    cg.querySelectorAll('img').forEach((im,i)=>im.classList.toggle('on',i===idx));
+    count.textContent=`${idx+1}/${imgs.length}`;
+  }
+  nav.querySelectorAll('button').forEach(b=>b.addEventListener('click',e=>{
+    e.preventDefault();e.stopPropagation();go(+b.dataset.d);
+  }));
+  let gx=null,gy=null;
+  card.addEventListener('touchstart',e=>{gx=e.touches[0].clientX;gy=e.touches[0].clientY;},{passive:true});
+  card.addEventListener('touchend',e=>{
+    if(gx===null)return;
+    const dx=e.changedTouches[0].clientX-gx, dy=e.changedTouches[0].clientY-gy;
+    if(Math.abs(dx)>44&&Math.abs(dx)>Math.abs(dy)){go(dx<0?1:-1);card.dataset.swiped='1';setTimeout(()=>delete card.dataset.swiped,400);}
+    gx=null;
+  },{passive:true});
+}
+document.querySelectorAll('[data-mod]').forEach(el=>{
+  if(el.classList.contains('turma')||el.classList.contains('mod-card')){
+    const d=MODS[el.dataset.mod];
+    initCardGallery(el,d.imgs,d.alt);
+  }
+});
+document.querySelectorAll('[data-gal]').forEach(el=>initCardGallery(el,GALS[el.dataset.gal],'Turmas de natação'));
+
+/* ===== modal central de modalidade ===== */
+const dmodal=document.getElementById('dmodal');
+const dmCard=document.getElementById('dmCard');
+let dmIdx=0,dmLen=0;
+function openMod(key){
+  const d=MODS[key];
+  dmIdx=0;dmLen=d.imgs.length;
+  dmCard.innerHTML=`
+    <button class="dm-close" id="dmClose" aria-label="Fechar">✕</button>
+    <div class="dm-gal" id="dmGal">
+      <div class="dm-track" id="dmTrack">${d.imgs.map(s=>`<img src="${s}" alt="${d.alt}">`).join('')}</div>
+      ${dmLen>1?`
+      <button class="dm-nav prev" id="dmPrev" aria-label="Foto anterior"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button class="dm-nav next" id="dmNext" aria-label="Próxima foto"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="dm-dots" id="dmDots">${d.imgs.map((_,i)=>`<span${i===0?' class="on"':''}></span>`).join('')}</div>`:''}
     </div>
-    <div class="detail-photo reveal-s"><div class="ph"><img src="${d.img}" alt="${d.alt}" loading="lazy"></div></div>
-    <div class="facts">${d.facts.map(f=>`<div class="fact reveal"><div class="fk">${f[0]}</div><div class="fv">${f[1]}</div></div>`).join('')}</div>
-    <div class="quote-band ${d.grad}"><p class="reveal">${d.quote}</p></div>
-    <div class="detail-how">
-      <h3 class="reveal">Como é a aula</h3>
-      <div class="steps">${d.steps.map((s,i)=>`<div class="step reveal"><div class="n">0${i+1}</div><b>${s[0]}</b><p>${s[1]}</p></div>`).join('')}</div>
-      <div class="detail-ctas reveal">
-        <a class="cta-btn" target="_blank" rel="noopener" href="${WA}${encodeURIComponent('Olá! Quero saber mais sobre '+d.wa+'.')}">${d.cta}</a>
-        <a class="btn-ghost" href="#top">Voltar ao início</a>
-      </div>
+    <div class="dm-body">
+      <div class="dm-kicker">${d.kicker}</div>
+      <h3>${d.title}</h3>
+      <div class="dm-chips">${d.chips.map(c=>`<span>${c}</span>`).join('')}</div>
+      <div class="dm-quote ${d.grad}"><span>${d.quote}</span></div>
+      <div class="dm-steps">${d.steps.map((s,i)=>`<div class="dm-step"><span class="n">${i+1}</span><span><b>${s[0]}</b><p>${s[1]}</p></span></div>`).join('')}</div>
+      <a class="cta-btn" target="_blank" rel="noopener" href="${WA}${encodeURIComponent('Olá! Quero saber mais sobre '+d.wa+'.')}">${d.cta}</a>
     </div>`;
-  detailsHost.appendChild(sec);
+  dmodal.classList.add('open');
+  dmodal.setAttribute('aria-hidden','false');
+  document.body.style.overflow='hidden';
+  document.getElementById('dmClose').addEventListener('click',closeMod);
+  if(dmLen>1){
+    document.getElementById('dmPrev').addEventListener('click',()=>dmGo(dmIdx-1));
+    document.getElementById('dmNext').addEventListener('click',()=>dmGo(dmIdx+1));
+    const gal=document.getElementById('dmGal');
+    let sx=null;
+    gal.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;},{passive:true});
+    gal.addEventListener('touchend',e=>{
+      if(sx===null)return;
+      const dx=e.changedTouches[0].clientX-sx;
+      if(Math.abs(dx)>44)dmGo(dx<0?dmIdx+1:dmIdx-1);
+      sx=null;
+    },{passive:true});
+  }
+}
+function dmGo(i){
+  dmIdx=(i+dmLen)%dmLen;
+  document.getElementById('dmTrack').style.transform=`translateX(-${dmIdx*100}%)`;
+  document.querySelectorAll('#dmDots span').forEach((s,j)=>s.classList.toggle('on',j===dmIdx));
+}
+function closeMod(){
+  dmodal.classList.remove('open');
+  dmodal.setAttribute('aria-hidden','true');
+  document.body.style.overflow='';
+  setTimeout(()=>dmCard.innerHTML='',400);
+}
+dmodal.addEventListener('click',e=>{if(e.target===dmodal)closeMod();});
+document.addEventListener('keydown',e=>{
+  if(!dmodal.classList.contains('open'))return;
+  if(e.key==='Escape')closeMod();
+  if(dmLen>1&&e.key==='ArrowRight')dmGo(dmIdx+1);
+  if(dmLen>1&&e.key==='ArrowLeft')dmGo(dmIdx-1);
+});
+document.querySelectorAll('[data-mod]').forEach(el=>{
+  el.addEventListener('click',e=>{
+    if(e.target.closest('.cg-nav'))return;
+    if(el.dataset.swiped)return;
+    e.preventDefault();
+    document.body.classList.remove('menu-open');
+    openMod(el.dataset.mod);
+  });
 });
 
 /* ===== CTA flutuante: só depois do hero ===== */
@@ -1297,7 +1445,7 @@ new IntersectionObserver(([e])=>{
 },{threshold:.25}).observe(hero);
 
 /* ===== reveal on scroll (com stagger em grupos) ===== */
-document.querySelectorAll('.facts,.steps,.turmas-grid,.mod-cards,.acc-list').forEach(g=>{
+document.querySelectorAll('.turmas-grid,.mod-cards,.acc-list').forEach(g=>{
   [...g.children].forEach((c,i)=>{c.style.transitionDelay=(i*80)+'ms';c.dataset.stagger='1';});
 });
 const ro = new IntersectionObserver(entries=>{
