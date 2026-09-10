@@ -631,7 +631,14 @@ section{scroll-margin-top:calc(var(--header-h) + 16px)}
   background:radial-gradient(320px 150px at 10% 0%,rgba(255,255,255,.25),transparent 60%);
 }
 .dm-quote span{position:relative;z-index:2}
-.dm-body .cta-btn{margin-top:auto;width:100%}
+.dm-cta{
+  position:sticky;bottom:calc(-1 * clamp(24px,3.4vw,38px));z-index:4;
+  margin-top:auto;
+  padding:14px 0 clamp(24px,3.4vw,38px);
+  margin-bottom:calc(-1 * clamp(24px,3.4vw,38px));
+  background:linear-gradient(180deg,rgba(255,255,255,0),#fff 34%);
+}
+.dm-cta .cta-btn{width:100%}
 .dm-close{
   position:absolute;top:14px;right:14px;z-index:5;width:40px;height:40px;border-radius:50%;
   background:rgba(10,12,40,.45);color:#fff;font-size:16px;
@@ -648,7 +655,12 @@ section{scroll-margin-top:calc(var(--header-h) + 16px)}
     transform:translateY(48px);
   }
   .dmodal.open .dm-card{transform:translateY(0)}
-  .dm-body .cta-btn{margin-top:6px}
+  .dm-body{padding-bottom:calc(24px + env(safe-area-inset-bottom))}
+  .dm-cta{
+    bottom:calc(-24px - env(safe-area-inset-bottom));
+    padding-bottom:calc(24px + env(safe-area-inset-bottom));
+    margin-bottom:calc(-24px - env(safe-area-inset-bottom));
+  }
 }
 
 /* ============ ACESSIBILIDADE (com foto da rampa) ============ */
@@ -1454,7 +1466,7 @@ function openMod(key){
       <div class="dm-quote ${d.grad}"><span>${d.quote}</span></div>
       <div class="dm-bene-t">${d.beneT}</div>
       <div class="dm-bene">${d.bene.map(b=>`<div class="dm-b"><span class="ck">✓</span><p><b>${b[0]}:</b> ${b[1]}</p></div>`).join('')}</div>
-      <a class="cta-btn" target="_blank" rel="noopener" href="${WA}${encodeURIComponent('Olá! Quero saber mais sobre '+d.wa+'.')}">${d.cta}</a>
+      <div class="dm-cta"><a class="cta-btn" target="_blank" rel="noopener" href="${WA}${encodeURIComponent('Olá! Quero saber mais sobre '+d.wa+'.')}">${d.cta}</a></div>
     </div>`;
   dmodal.classList.add('open');
   dmodal.setAttribute('aria-hidden','false');
