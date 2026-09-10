@@ -178,7 +178,7 @@ body.menu-open .sheet{transform:translateY(0);opacity:1;visibility:visible}
   font-size:clamp(38px,6.4vw,76px);
   font-weight:800;line-height:1.04;letter-spacing:-.03em;
   max-width:820px;margin:0 auto;
-  background:linear-gradient(160deg,var(--ink) 30%,var(--blue) 90%);
+  background:linear-gradient(115deg,var(--blue-deep) 12%,var(--cyan) 92%);
   -webkit-background-clip:text;background-clip:text;color:transparent;
 }
 .hero p{
@@ -261,6 +261,26 @@ section{scroll-margin-top:calc(var(--header-h) + 16px)}
   background:linear-gradient(120deg,#1d8fc4,var(--cyan) 85%);
   -webkit-background-clip:text;background-clip:text;color:transparent;
 }
+/* palavras de água: azul claro com brilho d'água + ondinha ao aparecer */
+.wtr{
+  display:inline-block;
+  background:linear-gradient(90deg,#1d8fc4,var(--cyan) 35%,#9ae0f7 55%,var(--cyan) 75%,#1d8fc4);
+  background-size:220% 100%;
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:wtrShimmer 7s linear infinite;
+}
+.hero .wtr,.in .wtr{
+  animation:wtrShimmer 7s linear infinite, wtrWave 1.8s var(--ease-apple) .25s 1;
+}
+@keyframes wtrShimmer{to{background-position:220% 0}}
+@keyframes wtrWave{
+  0%{transform:translateY(0)}
+  22%{transform:translateY(-6px) rotate(-1.4deg)}
+  48%{transform:translateY(3px) rotate(1deg)}
+  74%{transform:translateY(-2px)}
+  100%{transform:translateY(0)}
+}
+@media(prefers-reduced-motion:reduce){.wtr,.hero .wtr,.in .wtr{animation:none}}
 .kicker.k-o{
   color:var(--orange-deep);
   background:linear-gradient(120deg,rgba(247,154,51,.2),rgba(239,133,20,.08));
@@ -868,8 +888,8 @@ footer{background:var(--ink);color:#c9c3f0;margin-top:clamp(50px,8vh,90px)}
   <div class="blob b1" aria-hidden="true"></div>
   <div class="blob b2" aria-hidden="true"></div>
   <div class="blob b3" aria-hidden="true"></div>
-  <h1>Do primeiro <span class="hl-c">mergulho</span><br>à <span class="hl">recuperação</span></h1>
-  <p>Piscina aquecida no centro de Osasco — do bebê de 6 meses à reabilitação. Uma mensagem, e sua primeira aula está marcada.</p>
+  <h1>Do primeiro mergulho<br>à recuperação</h1>
+  <p><span class="wtr">Piscina aquecida</span> no centro de Osasco — do bebê de 6 meses à reabilitação. Uma mensagem, e sua primeira aula está marcada.</p>
   <div class="hero-ctas">
     <a class="cta-btn" href="https://wa.me/5511916934719?text=Ol%C3%A1!%20Quero%20agendar%20uma%20aula%20experimental." target="_blank" rel="noopener">Agendar aula experimental</a>
     <button class="btn-dark" id="verModsBtn">Ver as modalidades</button>
@@ -928,7 +948,7 @@ footer{background:var(--ink);color:#c9c3f0;margin-top:clamp(50px,8vh,90px)}
 <section class="sec mods snap" id="modalidades">
   <div class="sec-in">
     <div class="kicker k-o reveal">Modalidades</div>
-    <h2 class="reveal">O que você quer fazer <span class="hl">na água</span>?</h2>
+    <h2 class="reveal">O que você quer fazer <span class="wtr">na água</span>?</h2>
     <div class="mod-cards" id="modCards">
       <a class="mod-card reveal" href="#natacao" data-gal="natacao" aria-label="Ver as turmas de natação">
         <div class="info">
@@ -982,7 +1002,7 @@ footer{background:var(--ink);color:#c9c3f0;margin-top:clamp(50px,8vh,90px)}
   <div class="sec-in">
     <div class="kicker reveal">Tour virtual</div>
     <h2 class="reveal">Conhecendo a <span class="hl-c">nossa casa</span></h2>
-    <p class="sec-sub reveal">Da calçada à beira da piscina, em cinco paradas.</p>
+    <p class="sec-sub reveal">Da calçada à <span class="wtr">beira da piscina</span>, em cinco paradas.</p>
     <div class="tour reveal-s">
       <div class="tour-stage" id="tourStage">
         <button class="tour-btn prev" id="tourPrev" aria-label="Parada anterior">
@@ -1020,7 +1040,7 @@ footer{background:var(--ink);color:#c9c3f0;margin-top:clamp(50px,8vh,90px)}
       </div>
       <div class="acc-txt reveal-r">
         <div class="kicker k-o">♿ Acessibilidade</div>
-        <h2>Do portão ao mergulho, <span class="hl">sem barreiras</span></h2>
+        <h2>Do portão ao <span class="wtr">mergulho</span>, <span class="hl">sem barreiras</span></h2>
         <p>Se você tem mobilidade reduzida ou está em reabilitação, a estrutura foi pensada para te receber com segurança — e a foto ao lado é prova: a rampa desce até dentro da água.</p>
         <div class="acc-list">
           <div class="it"><span class="dot">✓</span><span>Rampa com corrimão que entra na piscina</span></div>
@@ -1111,7 +1131,7 @@ footer{background:var(--ink);color:#c9c3f0;margin-top:clamp(50px,8vh,90px)}
 <script>
 /* ===== dados da estrutura ===== */
 const STRUCT = [
-  {t:'Piscina aquecida o ano inteiro', p:'Coberta e climatizada. Frio não é desculpa — a água morna te espera.', img:'img/piscina-vazia.jpg'},
+  {t:'Piscina aquecida o ano inteiro', p:'Coberta e climatizada. Frio não é desculpa — a <span class="wtr">água morna</span> te espera.', img:'img/piscina-vazia.jpg'},
   {t:'Turmas por faixa de idade', p:'Cada um nada com quem vive a mesma fase. Ninguém fica para trás.', img:'img/baby-1.jpg'},
   {t:'Fisioterapeutas dentro da água', p:'Na hidroterapia, o profissional entra junto. Cada movimento, acompanhado.', img:'img/hidrot-3.jpg'},
   {t:'Aqui a gente sabe seu nome', p:'A recepção te reconhece. A professora percebe sua evolução, aula a aula.', img:'img/equipe.jpg'}
