@@ -253,6 +253,30 @@ section{scroll-margin-top:calc(var(--header-h) + 16px)}
   max-width:560px;margin:16px auto 0;text-align:center;
   font-size:15px;line-height:1.65;color:var(--ink-soft);
 }
+.hl{
+  background:linear-gradient(120deg,var(--orange-deep),var(--orange) 80%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.hl-c{
+  background:linear-gradient(120deg,#1d8fc4,var(--cyan) 85%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.kicker.k-o{
+  color:var(--orange-deep);
+  background:linear-gradient(120deg,rgba(247,154,51,.2),rgba(239,133,20,.08));
+  border-color:rgba(247,154,51,.45);
+}
+#natacao{
+  background:
+    radial-gradient(760px 380px at 92% 0%, rgba(247,154,51,.09), transparent 60%),
+    radial-gradient(680px 360px at 5% 90%, rgba(89,195,232,.12), transparent 60%),
+    #fff;
+}
+#acessibilidade{
+  background:
+    radial-gradient(700px 380px at 8% 10%, rgba(89,195,232,.13), transparent 60%),
+    linear-gradient(180deg,#fff,var(--mist) 55%,#fff);
+}
 
 /* ============ ESTRUTURA (desktop accordion) ============ */
 .struct-grid{
@@ -439,7 +463,7 @@ section{scroll-margin-top:calc(var(--header-h) + 16px)}
 .tour-stage{
   position:relative;border-radius:var(--radius-lg);overflow:hidden;
   height:clamp(400px,66vh,640px);background:var(--ink);box-shadow:var(--shadow-pop);
-  touch-action:pan-y;
+  touch-action:pan-y;cursor:pointer;
 }
 .tour-slide{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity .75s var(--ease-apple),visibility .75s}
 .tour-slide.on{opacity:1;visibility:visible}
@@ -556,6 +580,15 @@ section{scroll-margin-top:calc(var(--header-h) + 16px)}
 .dm-dots span{width:7px;height:7px;border-radius:99px;background:rgba(255,255,255,.45);transition:all .3s var(--ease-apple)}
 .dm-dots span.on{width:20px;background:#fff}
 .dm-body{padding:clamp(24px,3.4vw,38px);overflow-y:auto;display:flex;flex-direction:column;gap:15px}
+.dm-body>*{flex-shrink:0}
+.dmodal.open .dm-body>*{animation:dmIn .55s var(--ease-apple) both}
+.dmodal.open .dm-body>*:nth-child(2){animation-delay:.06s}
+.dmodal.open .dm-body>*:nth-child(3){animation-delay:.12s}
+.dmodal.open .dm-body>*:nth-child(4){animation-delay:.18s}
+.dmodal.open .dm-body>*:nth-child(5){animation-delay:.24s}
+.dmodal.open .dm-body>*:nth-child(6){animation-delay:.3s}
+.dmodal.open .dm-body>*:nth-child(7){animation-delay:.36s}
+@keyframes dmIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 .dm-kicker{
   width:fit-content;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;
   color:var(--blue);padding:6px 13px;border-radius:999px;
@@ -567,8 +600,28 @@ section{scroll-margin-top:calc(var(--header-h) + 16px)}
   background:linear-gradient(150deg,var(--ink) 35%,var(--blue));
   -webkit-background-clip:text;background-clip:text;color:transparent;
 }
-.dm-chips{display:flex;flex-wrap:wrap;gap:8px}
-.dm-chips span{font-size:12px;font-weight:700;padding:7px 13px;border-radius:999px;background:var(--mist);color:var(--blue-deep)}
+.dm-facts{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:14px 10px;text-align:center;
+  background:linear-gradient(150deg,var(--mist),#e3f3fb);
+  border:1px solid rgba(89,195,232,.25);border-radius:18px;padding:16px 12px;
+}
+.dm-fact{display:flex;flex-direction:column;align-items:center;gap:4px}
+.dm-fact svg{width:22px;height:22px;stroke:var(--blue);margin-bottom:2px}
+.dm-fact .fk{font-size:9.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan)}
+.dm-fact .fv{font-size:12.5px;font-weight:800;color:var(--ink);line-height:1.3}
+.dm-bene-t{
+  font-size:11.5px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--orange-deep);
+}
+.dm-bene{display:flex;flex-direction:column;gap:12px}
+.dm-b{display:flex;gap:11px;align-items:flex-start}
+.dm-b .ck{
+  width:24px;height:24px;border-radius:8px;flex-shrink:0;margin-top:1px;
+  background:linear-gradient(135deg,var(--orange),var(--orange-deep));color:#fff;
+  font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;
+}
+.dm-b p{font-size:13.5px;line-height:1.55;color:var(--ink-soft)}
+.dm-b b{color:var(--blue-deep);font-weight:800}
 .dm-quote{
   border-radius:18px;padding:18px 20px;color:#fff;position:relative;overflow:hidden;
   font-size:15.5px;font-weight:700;line-height:1.5;letter-spacing:-.01em;
@@ -578,15 +631,6 @@ section{scroll-margin-top:calc(var(--header-h) + 16px)}
   background:radial-gradient(320px 150px at 10% 0%,rgba(255,255,255,.25),transparent 60%);
 }
 .dm-quote span{position:relative;z-index:2}
-.dm-steps{display:flex;flex-direction:column;gap:13px}
-.dm-step{display:flex;gap:12px;align-items:flex-start}
-.dm-step .n{
-  width:26px;height:26px;border-radius:9px;flex-shrink:0;
-  background:linear-gradient(135deg,var(--cyan),var(--blue));color:#fff;
-  font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;
-}
-.dm-step b{font-size:14.5px;font-weight:800;letter-spacing:-.01em;display:block}
-.dm-step p{font-size:13.5px;color:var(--ink-soft);line-height:1.5;margin-top:2px}
 .dm-body .cta-btn{margin-top:auto;width:100%}
 .dm-close{
   position:absolute;top:14px;right:14px;z-index:5;width:40px;height:40px;border-radius:50%;
@@ -812,7 +856,7 @@ footer{background:var(--ink);color:#c9c3f0;margin-top:clamp(50px,8vh,90px)}
   <div class="blob b1" aria-hidden="true"></div>
   <div class="blob b2" aria-hidden="true"></div>
   <div class="blob b3" aria-hidden="true"></div>
-  <h1>Do primeiro mergulho<br>à recuperação</h1>
+  <h1>Do primeiro <span class="hl-c">mergulho</span><br>à <span class="hl">recuperação</span></h1>
   <p>Piscina aquecida no centro de Osasco — do bebê de 6 meses à reabilitação. Uma mensagem, e sua primeira aula está marcada.</p>
   <div class="hero-ctas">
     <a class="cta-btn" href="https://wa.me/5511916934719?text=Ol%C3%A1!%20Quero%20agendar%20uma%20aula%20experimental." target="_blank" rel="noopener">Agendar aula experimental</a>
@@ -851,7 +895,7 @@ footer{background:var(--ink);color:#c9c3f0;margin-top:clamp(50px,8vh,90px)}
 <section class="sec snap m-card" id="estrutura">
   <div class="sec-in">
     <div class="kicker reveal">Por que aqui?</div>
-    <h2 class="reveal">A estrutura faz a diferença</h2>
+    <h2 class="reveal">A <span class="hl-c">estrutura</span> faz a diferença</h2>
 
     <!-- desktop -->
     <div class="struct-grid">
@@ -871,8 +915,8 @@ footer{background:var(--ink);color:#c9c3f0;margin-top:clamp(50px,8vh,90px)}
 <!-- MODALIDADES -->
 <section class="sec mods snap" id="modalidades">
   <div class="sec-in">
-    <div class="kicker reveal">Modalidades</div>
-    <h2 class="reveal">O que você quer fazer na água?</h2>
+    <div class="kicker k-o reveal">Modalidades</div>
+    <h2 class="reveal">O que você quer fazer <span class="hl">na água</span>?</h2>
     <div class="mod-cards" id="modCards">
       <a class="mod-card reveal" href="#natacao" data-gal="natacao" aria-label="Ver as turmas de natação">
         <div class="info">
@@ -909,7 +953,7 @@ footer{background:var(--ink);color:#c9c3f0;margin-top:clamp(50px,8vh,90px)}
 <section class="sec snap m-card" id="natacao">
   <div class="sec-in">
     <div class="kicker reveal">Natação</div>
-    <h2 class="reveal">Uma turma para cada fase da vida</h2>
+    <h2 class="reveal">Uma turma para cada <span class="hl-c">fase da vida</span></h2>
     <p class="sec-sub reveal">Toque em uma turma e veja como funciona por dentro.</p>
     <div class="turmas-grid">
       <a class="turma reveal" href="#natacao" data-mod="baby" aria-label="Ver detalhes da natação baby"><div class="tx"><b>Baby</b><span>6 meses a 3 anos</span></div></a>
@@ -925,7 +969,7 @@ footer{background:var(--ink);color:#c9c3f0;margin-top:clamp(50px,8vh,90px)}
 <section class="sec tour-sec snap" id="ambientes">
   <div class="sec-in">
     <div class="kicker reveal">Tour virtual</div>
-    <h2 class="reveal">Conhecendo a nossa casa</h2>
+    <h2 class="reveal">Conhecendo a <span class="hl-c">nossa casa</span></h2>
     <p class="sec-sub reveal">Da calçada à beira da piscina, em cinco paradas.</p>
     <div class="tour reveal-s">
       <div class="tour-stage" id="tourStage">
@@ -963,8 +1007,8 @@ footer{background:var(--ink);color:#c9c3f0;margin-top:clamp(50px,8vh,90px)}
         <img src="img/rampa.jpg" alt="Rampa com corrimãos descendo até dentro da piscina aquecida" loading="lazy">
       </div>
       <div class="acc-txt reveal-r">
-        <div class="kicker">♿ Acessibilidade</div>
-        <h2>Do portão ao mergulho, sem barreiras</h2>
+        <div class="kicker k-o">♿ Acessibilidade</div>
+        <h2>Do portão ao mergulho, <span class="hl">sem barreiras</span></h2>
         <p>Se você tem mobilidade reduzida ou está em reabilitação, a estrutura foi pensada para te receber com segurança — e a foto ao lado é prova: a rampa desce até dentro da água.</p>
         <div class="acc-list">
           <div class="it"><span class="dot">✓</span><span>Rampa com corrimão que entra na piscina</span></div>
@@ -1229,96 +1273,116 @@ function pokeTour(){stopTour();startTour();}
 new IntersectionObserver(([e])=>{e.isIntersecting?startTour():stopTour();},{threshold:.35}).observe(tourStage);
 tourStage.addEventListener('mouseenter',stopTour);
 tourStage.addEventListener('mouseleave',startTour);
-let tSwipeX=null;
+let tSwipeX=null,tSwiped=false;
 tourStage.addEventListener('touchstart',e=>{tSwipeX=e.touches[0].clientX;stopTour();},{passive:true});
 tourStage.addEventListener('touchend',e=>{
   if(tSwipeX===null)return;
   const dx=e.changedTouches[0].clientX-tSwipeX;
-  if(Math.abs(dx)>44) goTour(dx<0?tourIdx+1:tourIdx-1);
+  if(Math.abs(dx)>44){goTour(dx<0?tourIdx+1:tourIdx-1);tSwiped=true;setTimeout(()=>tSwiped=false,400);}
   tSwipeX=null;startTour();
 },{passive:true});
+/* clique na própria imagem avança para a próxima parada */
+tourStage.addEventListener('click',e=>{
+  if(e.target.closest('.tour-btn')||tSwiped)return;
+  goTour(tourIdx+1);pokeTour();
+});
 
 /* ===== modalidades: dados + galerias + modal ===== */
 const WA = 'https://wa.me/5511916934719?text=';
 const MODS = {
   baby:{
-    kicker:'Natação · 6 meses a 3 anos', title:'Natação Baby',
+    kicker:'Natação para bebês', title:'Natação <span class="hl-c">Baby</span>',
     imgs:['img/baby-5.jpg','img/baby-2.jpg','img/baby-3.jpg','img/baby-6.jpg','img/baby-4.jpg','img/baby-1.jpg'],
     alt:'Aula de natação baby na piscina aquecida',
-    chips:['Turma com acompanhante','Piscina aquecida','Aula experimental'],
+    facts:[['Idade','6 meses a 3 anos'],['Formato','Turma + acompanhante'],['Água','Aquecida'],['Início','Aula experimental']],
     grad:'g-cyan',
     quote:'O primeiro mergulho acontece no colo — no ritmo do bebê.',
-    steps:[['Adaptação','Água morna, colo e brincadeira. Nada é forçado.'],
-           ['Confiança','Flutuar, submergir, sorrir. Uma conquista por aula.'],
-           ['Segurança','Rampa e degraus para entrar com o bebê no colo.']],
+    beneT:'O que o seu bebê ganha',
+    bene:[['Confiança desde cedo','perde o medo da água brincando no colo de quem ama.'],
+          ['Sono e apetite melhores','energia gasta do jeito bom — muitos pais notam nas primeiras semanas.'],
+          ['Desenvolvimento motor','a água estimula força e coordenação antes mesmo do andar.'],
+          ['Vínculo de verdade','30 minutos de atenção total entre vocês dois.']],
     cta:'Agendar aula experimental do baby', wa:'a natação baby'},
   infantil:{
-    kicker:'Natação · 4 a 12 anos', title:'Natação Infantil',
+    kicker:'Natação para crianças', title:'Natação <span class="hl-c">Infantil</span>',
     imgs:['img/infantil.jpg','img/wa-08.jpg','img/infantil-teen.jpg','img/wa-09.jpg'],
     alt:'Aula de natação infantil',
-    chips:['Turmas por nível','Piscina aquecida','Aula experimental'],
+    facts:[['Idade','4 a 12 anos'],['Formato','Turmas por nível'],['Água','Aquecida'],['Início','Aula experimental']],
     grad:'g-blue',
     quote:'Aqui a criança aprende brincando. A técnica vem junto — sem perceber.',
-    steps:[['Ambientação','Jogos que ensinam a respirar e flutuar.'],
-           ['Técnica lúdica','Os quatro nados, em formato de brincadeira.'],
-           ['Níveis','Turmas por fase. Evolução que dá para ver.']],
+    beneT:'O que a criança ganha',
+    bene:[['Segurança na água','voltar sozinha para a borda vem antes de qualquer estilo.'],
+          ['Técnica sem cobrança','os quatro nados entram como brincadeira, não como obrigação.'],
+          ['Fôlego e postura','menos tela, mais energia gasta do jeito certo.'],
+          ['Evolução visível','níveis claros — dá para comemorar cada conquista.']],
     cta:'Agendar aula experimental infantil', wa:'a natação infantil'},
   teen:{
-    kicker:'Natação · 13 a 16 anos', title:'Natação Teen',
+    kicker:'Natação para adolescentes', title:'Natação <span class="hl-c">Teen</span>',
     imgs:['img/teen.jpg','img/infantil-teen.jpg','img/adulto-2.jpg'],
     alt:'Adolescentes treinando natação nas raias',
-    chips:['Turma da mesma idade','Piscina aquecida','Aula experimental'],
+    facts:[['Idade','13 a 16 anos'],['Formato','Turma da mesma idade'],['Água','Aquecida'],['Início','Aula experimental']],
     grad:'g-ink',
     quote:'Treino de verdade: técnica, fôlego — e uma pausa do celular.',
-    steps:[['Quatro nados','Correção técnica de perto, nado a nado.'],
-           ['Condicionamento','Séries que constroem resistência.'],
-           ['Turma unida','Idade parecida, motivação em dobro.']],
+    beneT:'O que o teen ganha',
+    bene:[['Técnica dos quatro nados','correção de perto, nado a nado.'],
+          ['Condicionamento real','fôlego e resistência que aparecem fora da piscina também.'],
+          ['Turma que puxa junto','idade parecida, motivação em dobro para não faltar.']],
     cta:'Agendar aula experimental teen', wa:'a natação teen'},
   adulto:{
-    kicker:'Natação · a partir de 17 anos', title:'Natação Adulto',
-    imgs:['img/adulto-2.jpg','img/adulto-3.jpg','img/adulto-1.jpg','img/wa-03.jpg'],
+    kicker:'Natação para adultos', title:'Natação <span class="hl-c">Adulto</span>',
+    imgs:['img/adulto-2.jpg','img/adulto-3.jpg','img/adulto-1.jpg'],
     alt:'Adultos nadando na piscina aquecida',
-    chips:['Do zero ao aperfeiçoamento','Piscina aquecida','Aula experimental'],
+    facts:[['Idade','A partir de 17 anos'],['Formato','Do zero ao avançado'],['Água','Aquecida'],['Início','Aula experimental']],
     grad:'g-cyan',
     quote:'Boa parte dos nossos adultos começou do zero. Você também pode.',
-    steps:[['Sem medo','Adaptação sem pressa — e sem plateia.'],
-           ['Respiração','A base que destrava o nado confortável.'],
-           ['Seu ritmo','Do primeiro comprimento ao treino longo.']],
+    beneT:'O que você ganha',
+    bene:[['Do zero, sem plateia','adaptação no seu ritmo — medo de água tem solução.'],
+          ['Respiração que destrava','a base que transforma esforço em nado confortável.'],
+          ['Saúde sem impacto','coração e articulações agradecem, aula após aula.']],
     cta:'Agendar aula experimental adulto', wa:'a natação adulto'},
   individual:{
-    kicker:'Natação · todas as idades', title:'Natação Individualizada',
+    kicker:'Atenção exclusiva', title:'Natação <span class="hl">Individualizada</span>',
     imgs:['img/wa-02.jpg','img/hidrot-7.jpg','img/baby-4.jpg'],
     alt:'Aula individualizada de natação',
-    chips:['Uma professora, um aluno','Piscina aquecida','Avaliação inicial'],
+    facts:[['Idade','Todas as idades'],['Formato','1 professora, 1 aluno'],['Água','Aquecida'],['Início','Avaliação inicial']],
     grad:'g-orange',
     quote:'Uma professora só para você. Evolução pelo menor caminho.',
-    steps:[['Avaliação','Objetivo e ponto de partida, mapeados.'],
-           ['Sob medida','Cada aula desenhada para você.'],
-           ['Acompanhamento','A mesma professora, aula após aula.']],
+    beneT:'O que você ganha',
+    bene:[['Atenção 100% sua','uma professora, um aluno, um objetivo.'],
+          ['Plano sob medida','cada aula desenhada para a sua necessidade — inclusive casos especiais.'],
+          ['Evolução rápida','o caminho mais curto entre você e o seu objetivo.']],
     cta:'Falar sobre a aula individualizada', wa:'a natação individualizada'},
   hidroginastica:{
-    kicker:'Hidroginástica · adultos e idosos', title:'Hidroginástica',
+    kicker:'Movimento sem impacto', title:'<span class="hl-c">Hidroginástica</span>',
     imgs:['img/hidrog-1.jpg','img/hidro-secao.jpg','img/hidrog-2.jpg','img/hidro-adultos.jpg','img/idosos-hidro.jpg'],
     alt:'Turma de hidroginástica na piscina aquecida',
-    chips:['Turmas animadas','Zero impacto','Aula experimental'],
+    facts:[['Público','Adultos e idosos'],['Formato','Turmas animadas'],['Água','Aquecida'],['Início','Aula experimental']],
     grad:'g-blue',
     quote:'Fortalece sem impacto — e rende as melhores risadas da semana.',
-    steps:[['Aquecimento','Movimentos leves na água morna.'],
-           ['Força','Espaguetes e halteres, sem castigar as articulações.'],
-           ['Leveza','Alongamento e conversa para fechar.']],
+    beneT:'O que você ganha',
+    bene:[['Força sem castigo','fortalece os músculos e protege as articulações.'],
+          ['Coração saudável','aeróbico na medida certa, dentro da água morna.'],
+          ['Turma que vira família','as melhores risadas da semana são aqui.']],
     cta:'Agendar aula experimental de hidro', wa:'a hidroginástica'},
   hidroterapia:{
-    kicker:'Hidroterapia · todas as idades', title:'Hidroterapia',
+    kicker:'Reabilitação na água', title:'<span class="hl">Hidroterapia</span>',
     imgs:['img/hidrot-2.jpg','img/hidrot-1.jpg','img/hidrot-3.jpg','img/hidrot-5.jpg','img/hidrot-4.jpg','img/hidrot-7.jpg'],
     alt:'Sessão de hidroterapia com fisioterapeuta na água',
-    chips:['Individual, com fisioterapeuta','Piscina aquecida','Avaliação inicial'],
+    facts:[['Público','Todas as idades'],['Formato','Individual, com fisio'],['Água','Aquecida'],['Início','Avaliação inicial']],
     grad:'g-ink',
     quote:'O fisioterapeuta entra na água com você. Cada movimento, guiado.',
-    steps:[['Avaliação','Plano de reabilitação só seu.'],
-           ['Na água','Sessões lado a lado com o profissional.'],
-           ['Evolução','Progresso registrado a cada sessão.']],
+    beneT:'O que você ganha',
+    bene:[['Profissional ao lado','o fisioterapeuta trabalha dentro da água, a um braço de você.'],
+          ['Recuperação acelerada','a água tira o peso do corpo e deixa o movimento acontecer.'],
+          ['Evolução monitorada','cada sessão registrada rumo ao objetivo combinado.']],
     cta:'Agendar avaliação de hidroterapia', wa:'a hidroterapia'}
 };
+const FICONS=[
+  '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M9 10h.01M15 10h.01M8.5 14.5c1 1.2 2.2 1.8 3.5 1.8s2.5-.6 3.5-1.8"/></svg>',
+  '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.6-3 2.8-4.7 5.5-4.7s4.9 1.7 5.5 4.7"/><circle cx="17" cy="9.5" r="2.4"/><path d="M15.8 14.6c2.6.2 4.3 1.7 4.7 4.4"/></svg>',
+  '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><path d="M12 3.5S6.5 9.8 6.5 14a5.5 5.5 0 0 0 11 0c0-4.2-5.5-10.5-5.5-10.5Z"/></svg>',
+  '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><rect x="4" y="5.5" width="16" height="15" rx="3"/><path d="M4 10.5h16M8.5 3.5v4M15.5 3.5v4M9 15l2.2 2.2L15.5 13"/></svg>'
+];
 /* galeria extra para o card "Aprender a nadar" */
 const GALS = { natacao:['img/baby-2.jpg','img/wa-08.jpg','img/teen.jpg','img/adulto-2.jpg'] };
 
@@ -1386,9 +1450,10 @@ function openMod(key){
     <div class="dm-body">
       <div class="dm-kicker">${d.kicker}</div>
       <h3>${d.title}</h3>
-      <div class="dm-chips">${d.chips.map(c=>`<span>${c}</span>`).join('')}</div>
+      <div class="dm-facts">${d.facts.map((f,i)=>`<div class="dm-fact">${FICONS[i]}<span class="fk">${f[0]}</span><span class="fv">${f[1]}</span></div>`).join('')}</div>
       <div class="dm-quote ${d.grad}"><span>${d.quote}</span></div>
-      <div class="dm-steps">${d.steps.map((s,i)=>`<div class="dm-step"><span class="n">${i+1}</span><span><b>${s[0]}</b><p>${s[1]}</p></span></div>`).join('')}</div>
+      <div class="dm-bene-t">${d.beneT}</div>
+      <div class="dm-bene">${d.bene.map(b=>`<div class="dm-b"><span class="ck">✓</span><p><b>${b[0]}:</b> ${b[1]}</p></div>`).join('')}</div>
       <a class="cta-btn" target="_blank" rel="noopener" href="${WA}${encodeURIComponent('Olá! Quero saber mais sobre '+d.wa+'.')}">${d.cta}</a>
     </div>`;
   dmodal.classList.add('open');
