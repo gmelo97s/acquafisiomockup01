@@ -145,13 +145,22 @@ body.menu-open .hamb span:nth-child(3){top:23px;transform:rotate(-45deg)}
   overflow-y:auto;display:flex;flex-direction:column;
 }
 body.menu-open .sheet{transform:translateY(0);opacity:1;visibility:visible}
-.sheet .group-label{font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);margin:18px 0 6px}
-.sheet a.s-link{
-  display:flex;align-items:center;gap:14px;padding:14px 6px;
-  font-size:17px;font-weight:700;border-bottom:1px solid rgba(36,29,94,.07);
+.sheet a.s-link,.sheet .s-acc{
+  display:flex;align-items:center;gap:14px;padding:14px 6px;width:100%;
+  font-size:17px;font-weight:700;color:var(--ink);text-align:left;
+  border-bottom:1px solid rgba(36,29,94,.07);
 }
 .sheet a.s-link small{font-weight:500;font-size:13px;color:var(--ink-soft);margin-left:auto}
-.sheet .num{font-size:11px;font-weight:800;color:var(--cyan);background:var(--mist);width:28px;height:28px;border-radius:10px;display:flex;align-items:center;justify-content:center}
+.sheet .s-acc .chev{margin-left:auto;width:12px;height:12px;transition:transform .35s var(--ease-apple);color:var(--ink-soft)}
+.sheet .s-acc[aria-expanded="true"] .chev{transform:rotate(180deg)}
+.sheet .s-sub{
+  display:flex;flex-direction:column;
+  max-height:0;opacity:0;overflow:hidden;
+  transition:max-height .45s var(--ease-apple),opacity .35s var(--ease-apple);
+}
+.sheet .s-sub.open{max-height:420px;opacity:1}
+.sheet .s-sub .s-link{padding-left:12px;font-size:16px}
+.sheet .num{font-size:11px;font-weight:800;color:var(--cyan);background:var(--mist);width:28px;height:28px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .sheet .cta-btn{margin-top:28px;width:100%;padding:17px}
 
 /* ============ HERO ============ */
@@ -361,6 +370,8 @@ section{scroll-margin-top:calc(var(--header-h) + 16px)}
 
 /* ============ MODALIDADES ============ */
 .mods{background:linear-gradient(180deg,#fff, var(--mist) 30%, var(--mist) 70%, #fff)}
+.mods h2{max-width:none}
+@media(min-width:900px){.mods h2{white-space:nowrap}}
 .mod-cards{
   display:flex;gap:20px;margin-top:clamp(36px,6vh,60px);
 }
@@ -368,15 +379,15 @@ section{scroll-margin-top:calc(var(--header-h) + 16px)}
   position:relative;flex:1;min-width:0;border-radius:var(--radius-lg);overflow:hidden;
   aspect-ratio:auto;height:clamp(380px,52vh,520px);
   box-shadow:var(--shadow-soft);cursor:pointer;
-  transition:flex 1.05s var(--ease-apple),box-shadow 1.05s var(--ease-apple),transform 1.05s var(--ease-apple);
+  transition:flex 2.15s cubic-bezier(.22,.7,.2,1),box-shadow 2.15s cubic-bezier(.22,.7,.2,1),transform 2.15s cubic-bezier(.22,.7,.2,1);
 }
 @media(min-width:861px){
-  .mod-cards:hover .mod-card{flex:.86;transform:scale(.99)}
-  .mod-cards:hover .mod-card:hover{flex:1.42;transform:scale(1);box-shadow:var(--shadow-pop)}
+  .mod-cards:hover .mod-card{flex:.9;transform:scale(.985)}
+  .mod-cards:hover .mod-card:hover{flex:1.28;transform:scale(1);box-shadow:var(--shadow-pop)}
 }
 .mod-card img{
   position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
-  transition:transform 1.2s var(--ease-apple);
+  transition:transform 2.4s cubic-bezier(.22,.7,.2,1);
 }
 .mod-card:hover img{transform:scale(1.05)}
 .mod-card::after{
@@ -726,8 +737,8 @@ section{scroll-margin-top:calc(var(--header-h) + 16px)}
   align-items:start;margin-top:8px;
 }
 .where-grid .kicker{text-align:left}
-.where-grid h2{text-align:left;margin:0}
-.addr{font-size:clamp(16px,1.8vw,19px);line-height:1.5;font-weight:600;margin-top:20px;display:inline-block}
+.where-grid h2{text-align:left;margin:0;white-space:nowrap;max-width:none}
+.addr{font-size:clamp(14.5px,1.55vw,18px);line-height:1.45;font-weight:600;margin-top:20px;display:inline-block;white-space:nowrap}
 .addr:hover{color:var(--blue)}
 .maps-link{
   display:inline-flex;align-items:center;gap:7px;margin-top:10px;
@@ -756,6 +767,10 @@ section{scroll-margin-top:calc(var(--header-h) + 16px)}
 @media(max-width:860px){
   .where-grid{grid-template-columns:1fr}
   .map-card{aspect-ratio:4/3}
+  .addr{font-size:13.5px}
+}
+@media(max-width:380px){
+  .addr{white-space:normal}
 }
 
 /* ============ FOOTER ============ */
@@ -802,6 +817,12 @@ footer{background:var(--ink);color:#c9c3f0;margin-top:clamp(50px,8vh,90px)}
 .reveal-r{opacity:0;transform:translateX(40px);transition:opacity .85s var(--ease-apple),transform .85s var(--ease-apple)}
 .reveal-s{opacity:0;transform:scale(.93) translateY(16px);transition:opacity .9s var(--ease-apple),transform .9s var(--ease-apple)}
 .reveal.in,.reveal-l.in,.reveal-r.in,.reveal-s.in{opacity:1;transform:none}
+.mod-card.reveal{
+  transition:opacity .8s var(--ease-apple),transform .8s var(--ease-apple),flex 2.15s cubic-bezier(.22,.7,.2,1),box-shadow 2.15s cubic-bezier(.22,.7,.2,1);
+}
+.mod-card.reveal.in{
+  transition:flex 2.15s cubic-bezier(.22,.7,.2,1),box-shadow 2.15s cubic-bezier(.22,.7,.2,1),transform 2.15s cubic-bezier(.22,.7,.2,1),opacity .8s var(--ease-apple);
+}
 @media(prefers-reduced-motion:reduce){
   .reveal,.reveal-l,.reveal-r,.reveal-s{opacity:1;transform:none;transition:none}
   .hero .blob{animation:none}
@@ -866,13 +887,17 @@ footer{background:var(--ink);color:#c9c3f0;margin-top:clamp(50px,8vh,90px)}
 
 <!-- MOBILE SHEET -->
 <div class="sheet" id="sheet">
-  <div class="group-label">Natação</div>
-  <a class="s-link" href="#natacao" data-mod="baby"><span class="num">01</span>Natação Baby<small>6 meses a 3 anos</small></a>
-  <a class="s-link" href="#natacao" data-mod="infantil"><span class="num">02</span>Natação Infantil<small>4 a 12 anos</small></a>
-  <a class="s-link" href="#natacao" data-mod="teen"><span class="num">03</span>Natação Teen<small>13 a 16 anos</small></a>
-  <a class="s-link" href="#natacao" data-mod="adulto"><span class="num">04</span>Natação Adulto<small>Do zero ao topo</small></a>
-  <a class="s-link" href="#natacao" data-mod="individual"><span class="num">05</span>Individualizada<small>1 professora, 1 aluno</small></a>
-  <div class="group-label">Mais</div>
+  <button class="s-acc" id="sheetNatBtn" type="button" aria-expanded="false" aria-controls="sheetNat">
+    Natação
+    <svg class="chev" viewBox="0 0 10 6" fill="none" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+  </button>
+  <div class="s-sub" id="sheetNat" inert>
+    <a class="s-link" href="#natacao" data-mod="baby"><span class="num">01</span>Natação Baby<small>6 meses a 3 anos</small></a>
+    <a class="s-link" href="#natacao" data-mod="infantil"><span class="num">02</span>Natação Infantil<small>4 a 12 anos</small></a>
+    <a class="s-link" href="#natacao" data-mod="teen"><span class="num">03</span>Natação Teen<small>13 a 16 anos</small></a>
+    <a class="s-link" href="#natacao" data-mod="adulto"><span class="num">04</span>Natação Adulto<small>Do zero ao topo</small></a>
+    <a class="s-link" href="#natacao" data-mod="individual"><span class="num">05</span>Individualizada<small>1 professora, 1 aluno</small></a>
+  </div>
   <a class="s-link" href="#modalidades" data-mod="hidroginastica">Hidroginástica</a>
   <a class="s-link" href="#modalidades" data-mod="hidroterapia">Hidroterapia</a>
   <a class="s-link" href="#ambientes">Ambientes</a>
@@ -1060,7 +1085,7 @@ footer{background:var(--ink);color:#c9c3f0;margin-top:clamp(50px,8vh,90px)}
         <div class="kicker reveal">Osasco, Centro</div>
         <h2 class="reveal">Onde estamos</h2>
         <a class="addr reveal" href="https://www.google.com/maps/search/?api=1&query=R.+Nossa+Sra.+de+F%C3%A1tima%2C+48+-+Centro%2C+Osasco+-+SP%2C+06086-000" target="_blank" rel="noopener">
-          R. Nossa Sra. de Fátima, 48<br>Centro, Osasco/SP — 06086-000
+          R. Nossa Sra. de Fátima, 48 — Centro, Osasco/SP · 06086-000
         </a><br>
         <a class="maps-link reveal" href="https://www.google.com/maps/search/?api=1&query=R.+Nossa+Sra.+de+F%C3%A1tima%2C+48+-+Centro%2C+Osasco+-+SP%2C+06086-000" target="_blank" rel="noopener">
           Abrir no Google Maps
@@ -1223,8 +1248,30 @@ track.innerHTML += track.innerHTML;
 
 /* ===== menu mobile ===== */
 const hambBtn = document.getElementById('hambBtn');
-hambBtn.addEventListener('click',()=>document.body.classList.toggle('menu-open'));
-document.querySelectorAll('#sheet a').forEach(a=>a.addEventListener('click',()=>document.body.classList.remove('menu-open')));
+const sheetNatBtn = document.getElementById('sheetNatBtn');
+const sheetNat = document.getElementById('sheetNat');
+function closeSheetNat(){
+  sheetNatBtn.setAttribute('aria-expanded','false');
+  sheetNat.classList.remove('open');
+  sheetNat.setAttribute('inert','');
+}
+function closeMenu(){
+  document.body.classList.remove('menu-open');
+  closeSheetNat();
+}
+hambBtn.addEventListener('click',()=>{
+  const opening = !document.body.classList.contains('menu-open');
+  document.body.classList.toggle('menu-open');
+  if(!opening) closeSheetNat();
+});
+sheetNatBtn.addEventListener('click',()=>{
+  const on = sheetNatBtn.getAttribute('aria-expanded')==='true';
+  sheetNatBtn.setAttribute('aria-expanded', String(!on));
+  sheetNat.classList.toggle('open', !on);
+  if(on) sheetNat.setAttribute('inert','');
+  else sheetNat.removeAttribute('inert');
+});
+document.querySelectorAll('#sheet a').forEach(a=>a.addEventListener('click',closeMenu));
 
 /* ===== ver modalidades: enquadrar os cards ===== */
 document.getElementById('verModsBtn').addEventListener('click',()=>{
