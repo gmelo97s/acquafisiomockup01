@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Botanikafé Café Bienal</title>
+  <meta name="description" content="Botanikafé no Café Bienal, Parque Ibirapuera. Brunch all day, café de especialidade, smoothies e drinks. Cardápio completo com busca inteligente.">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#f5f0d6" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0b1720" media="(prefers-color-scheme: dark)">
+  <meta property="og:title" content="Botanikafé · Café Bienal — Parque Ibirapuera">
+  <meta property="og:description" content="Brunch all day no coração do Ibirapuera. Veja o cardápio completo.">
+  <meta property="og:image" content="img/brand/og.jpg">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="img/brand/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="img/brand/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..800,0..100;1,9..144,300..800,0..100&family=Inter+Tight:wght@400;500;600;700&display=swap">
+  <link rel="preload" as="image" href="img/b/unidade-cafe-bienal.webp">
+  <link rel="stylesheet" href="css/styles.css">
+  <script>
+    // Tema salvo (dia/noite) aplicado antes da pintura para evitar flash
+    var t = null; try { t = localStorage.getItem('btk-theme'); } catch (e) {}
+    if (t !== 'dark' && t !== 'light') t = (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', t);
+    document.documentElement.classList.add('js');
+  </script>
+  <script type="importmap">{ "imports": { "three": "./vendor/three.module.min.js" } }</script>
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="logo" viewBox="0 0 911 1397"><path fill="currentColor" d="M447.066 5.56754C438.285 15.4131 395.443 82.4694 388.791 96.8386C381.074 113.869 376.284 143.672 378.679 160.436C382.671 189.706 392.782 210.994 415.134 236.273C435.358 259.157 435.624 260.488 435.624 324.617C435.624 374.111 435.092 380.497 431.632 377.57C423.117 370.652 416.731 355.75 406.353 319.029C399.967 296.943 390.653 271.398 384.267 259.423C370.43 232.814 347.812 208.067 326.258 196.625C309.76 187.843 164.472 138.083 155.158 138.083C150.369 138.083 150.102 139.68 151.699 158.573C155.957 213.655 190.017 276.454 243.502 327.544C288.739 370.918 341.16 398.592 401.563 410.832C412.739 412.961 425.246 414.824 428.971 414.824H435.624V443.03V471.236L427.907 469.373C411.143 465.648 386.928 478.155 378.413 494.919C373.623 503.7 373.091 523.125 377.349 533.769C384.001 551.331 400.765 561.975 421.521 561.975H435.624V585.657V609.606L423.117 598.43C416.199 592.31 402.096 583.529 391.718 578.473C337.7 552.928 282.352 547.34 207.579 559.846C157.819 568.361 75.0633 588.318 75.0633 592.044C75.0633 595.503 125.089 640.473 146.643 656.173C179.905 680.654 220.352 696.886 266.12 703.804C314.55 711.255 358.722 704.869 407.151 683.581C420.722 677.727 432.431 672.937 433.761 672.937C434.825 672.937 435.624 681.186 435.624 691.298V709.658L420.19 710.723C392.25 712.585 375.486 732.277 377.615 759.684C379.744 784.431 398.104 801.462 422.851 801.728L435.624 801.994V844.037V886.346L419.392 871.445C402.096 856.011 371.495 839.247 342.756 830.2C301.245 816.629 242.172 811.041 198.798 816.363C146.377 822.749 1.8868 855.213 0.0241246 861.067C-1.30636 864.526 52.7112 912.956 83.8445 936.372C130.677 971.497 189.485 993.051 249.356 997.308C307.365 1001.03 347.546 993.583 402.894 968.57C419.392 961.119 433.495 954.999 434.293 954.999C435.092 954.999 435.624 975.222 435.624 999.969V1044.94L419.924 1046C400.499 1047.33 385.332 1056.65 378.413 1070.75C372.293 1084.32 373.889 1108 381.872 1119.18C389.589 1130.09 407.684 1138.61 423.117 1138.61H435.624V1247.71C435.624 1353.61 435.358 1356.8 430.568 1354.41C422.053 1349.62 408.482 1332.32 400.765 1315.56C396.508 1306.78 388.525 1281.23 382.405 1259.15C363.246 1186.24 343.821 1148.19 308.962 1114.12C289.537 1095.23 278.095 1087.25 253.614 1076.07C228.601 1064.36 21.5779 996.776 17.8526 998.905C10.9341 1003.16 18.3848 1055.85 31.4235 1094.43C73.7328 1221.1 190.017 1333.39 323.863 1377.29C378.679 1395.12 446.8 1401.24 511.461 1394.06C570.535 1387.14 637.059 1362.39 693.737 1325.41C791.128 1262.07 868.562 1155.37 889.052 1055.05C894.108 1031.63 894.64 997.575 890.382 997.575C885.06 997.575 682.029 1064.9 661.539 1073.41C615.239 1092.84 581.178 1126.37 555.899 1177.19C543.127 1203 537.273 1220.3 526.097 1263.67C521.307 1282.03 514.122 1304.38 510.131 1313.43C503.212 1328.6 480.594 1356.8 475.272 1356.8C473.942 1356.8 472.877 1300.13 472.877 1230.67V1104.55L486.98 1105.08C515.719 1105.61 535.41 1086.72 535.41 1058.51C535.144 1030.57 515.985 1012.48 486.98 1012.74H472.877V983.738C472.877 949.677 468.354 951.008 512.792 970.965C561.487 992.785 584.638 997.841 635.462 997.841C708.372 997.841 772.768 976.819 827.584 935.308C853.661 915.351 910.606 864.793 910.606 861.067C910.606 855.213 762.39 821.951 709.703 816.363C627.213 807.316 540.998 828.603 491.238 870.647L472.877 885.814V864.526V843.239L480.328 844.835C510.131 850.689 539.667 817.96 531.685 787.891C525.564 765.805 508.268 752.766 484.852 752.766H472.877V711.521V670.542L484.319 675.332C490.44 678.259 502.148 683.315 510.131 687.04C585.436 720.568 683.625 709.924 756.802 660.164C777.557 646.061 834.768 595.769 834.768 591.778C834.768 589.915 831.575 587.786 827.584 586.988C823.326 585.924 799.377 580.602 774.098 574.481C748.819 568.627 712.896 561.177 694.269 558.25C608.852 544.146 525.564 561.709 480.328 603.22L472.877 610.138V568.627V527.382L485.65 528.447C517.581 531.374 542.328 501.305 533.813 470.172C527.959 448.086 506.139 433.716 482.191 436.644L472.877 437.708V426.532V415.622L490.972 413.759C610.183 401.519 727.265 301.467 756.536 186.779C762.39 163.097 764.785 140.744 761.592 137.551C759.729 135.955 615.505 182.522 596.878 191.037C553.77 209.929 524.5 251.707 507.204 318.497C498.689 350.961 489.907 370.652 479.264 380.497L472.877 386.351V327.278C472.877 259.956 472.345 262.35 496.028 234.41C529.556 194.762 539.401 148.993 523.702 105.088C519.178 92.0488 473.676 19.9367 460.105 4.23706C455.049 -1.61706 453.718 -1.61706 447.066 5.56754Z"/></symbol>
+      <symbol id="i-search" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></g></symbol>
+      <symbol id="i-home" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1z"/></symbol>
+      <symbol id="i-menu" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 3v7a3 3 0 0 0 6 0V3M9 3v18"/><path d="M17 21V3c-1.7 1-3 3.5-3 6.5V13h3"/></g></symbol>
+      <symbol id="i-image" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="m3 16 5-5 4 4 3-3 6 6"/><circle cx="16" cy="8.5" r="1.5"/></g></symbol>
+      <symbol id="i-pin" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-6.2-7-11.5a7 7 0 1 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></g></symbol>
+      <symbol id="i-mic" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></g></symbol>
+      <symbol id="i-x" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M6 6l12 12M18 6 6 18"/></symbol>
+      <symbol id="i-arrow" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-5-5 5 5-5 5"/></symbol>
+      <symbol id="i-sun" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></g></symbol>
+      <symbol id="i-moon" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></symbol>
+      <symbol id="i-share" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3m-4 4 4-4 4 4"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></g></symbol>
+      <symbol id="i-insta" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></g></symbol>
+      <symbol id="i-wa" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 20l1.3-3.9A8 8 0 1 1 8 19z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-1 .8a4 4 0 0 1-1.8-1.8l.8-1-1-2z" stroke-width="1.4"/></g></symbol>
+      <symbol id="i-clock" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></g></symbol>
+      <symbol id="i-copy" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2.5"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></g></symbol>
+      <symbol id="i-mail" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m4 7 8 6 8-6"/></g></symbol>
+      <symbol id="i-sparkle" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2c.6 4.6 2.4 6.4 7 7-4.6.6-6.4 2.4-7 7-.6-4.6-2.4-6.4-7-7 4.6-.6 6.4-2.4 7-7zm7 12c.3 2 1 2.7 3 3-2 .3-2.7 1-3 3-.3-2-1-2.7-3-3 2-.3 2.7-1 3-3z"/></symbol>
+    </defs>
+  </svg>
+
+  <!-- Intro -->
+  <div class="intro" aria-hidden="true">
+    <div class="intro__mark">
+      <svg class="intro__logo" viewBox="0 0 911 1397">
+        <defs><clipPath id="growClip"><rect class="intro__grow" x="0" y="0" width="911" height="1397"/></clipPath></defs>
+        <use href="#logo" clip-path="url(#growClip)"/>
+      </svg>
+      <p class="intro__word">Botanika<em>fé</em></p>
+    </div>
+  </div>
+
+  <a class="skip" href="#cardapio">Pular para o cardápio</a>
+
+  <!-- Header -->
+  <header class="hdr" id="hdr">
+    <a class="brand" href="#inicio" aria-label="Botanikafé Café Bienal — início">
+      <svg class="brand__logo" aria-hidden="true"><use href="#logo"/></svg>
+      <span class="brand__txt"><span class="brand__name"><em>B</em>otanikafé</span><span class="brand__unit">Café Bienal · Ibirapuera</span></span>
+    </a>
+    <nav class="hdr__nav" aria-label="Seções">
+      <a href="#destaques">Destaques</a>
+      <a href="#cardapio">Cardápio</a>
+      <a href="#galeria">Galeria</a>
+      <a href="#visite">Visite</a>
+    </nav>
+    <div class="hdr__actions">
+      <button class="iconbtn searchbtn" type="button" data-open-search aria-label="Buscar no cardápio">
+        <svg><use href="#i-search"/></svg><span class="searchbtn__lbl">Buscar</span><kbd>/</kbd>
+      </button>
+      <button class="theme-toggle" type="button" id="themeToggle" aria-label="Alternar modo dia e noite" title="all day · all night">
+        <span class="theme-toggle__track"><svg class="ic-sun"><use href="#i-sun"/></svg><svg class="ic-moon"><use href="#i-moon"/></svg><span class="theme-toggle__thumb"></span></span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero" id="inicio">
+      <canvas class="hero__gl" id="heroGL" aria-hidden="true"></canvas>
+      <div class="hero__fallback" aria-hidden="true"><svg><use href="#logo"/></svg></div>
+      <div class="hero__inner">
+        <p class="status" data-status><span class="status__dot"></span><span class="status__txt">Todos os dias · 08h às 18h30</span></p>
+        <h1 class="hero__title" aria-label="Brunch all day no coração do Ibirapuera.">
+          <span class="line"><span class="w">Brunch</span></span>
+          <span class="line"><em class="w accent">all day</em> <span class="w">no</span></span>
+          <span class="line"><span class="w">coração</span> <span class="w">do</span></span>
+          <span class="line"><span class="w">Ibirapuera.</span></span>
+        </h1>
+        <p class="hero__lede">Café Bienal — a casa do Botanikafé dentro do Pavilhão da Bienal, cercada pelo verde do parque.</p>
+
+        <button class="hsearch" type="button" data-open-search aria-label="Abrir busca inteligente do cardápio">
+          <svg class="hsearch__ic"><use href="#i-search"/></svg>
+          <span class="hsearch__ph"><span class="hsearch__pre">Experimente:</span> <span class="hsearch__typed" id="typed">matcha gelado</span><span class="caret"></span></span>
+          <span class="hsearch__ai"><svg><use href="#i-sparkle"/></svg>IA</span>
+        </button>
+        <div class="quick" role="list">
+          <button role="listitem" class="chip" data-q="vegano">🌱 Vegano</button>
+          <button role="listitem" class="chip" data-q="até R$ 30">Até R$ 30</button>
+          <button role="listitem" class="chip" data-q="café gelado">Café gelado</button>
+          <button role="listitem" class="chip" data-q="sem glúten">Sem glúten</button>
+          <button role="listitem" class="chip" data-q="drink sem álcool">Sem álcool</button>
+        </div>
+      </div>
+      <a class="scrollcue" href="#refugio" aria-label="Rolar para baixo"><span></span></a>
+    </section>
+
+    <!-- REFÚGIO: arco que expande -->
+    <section class="arch" id="refugio" aria-label="O Café Bienal">
+      <div class="arch__sticky">
+        <div class="arch__frame">
+          <img src="img/b/unidade-cafe-bienal.webp" alt="Entrada do Café Bienal com plantas e o letreiro café bienal na coluna" class="arch__img" fetchpriority="high">
+        </div>
+        <div class="arch__caption">
+          <p class="eyebrow">Pavilhão da Bienal · Parque Ibirapuera</p>
+          <h2 class="arch__title">Um refúgio <em>verde</em><br>para qualquer hora.</h2>
+        </div>
+      </div>
+    </section>
+
+    <!-- MANIFESTO -->
+    <section class="manifesto" aria-label="Sobre">
+      <p class="manifesto__txt" data-words>Fruto da parceria entre o Botanikafé e a Fundação Bienal de São Paulo, o Café Bienal é um ambiente confortável e acolhedor em meio à natureza exuberante do Parque Ibirapuera — com comida gostosa e saudável a qualquer hora do dia.</p>
+      <div class="facts">
+        <div class="fact"><svg><use href="#i-clock"/></svg><div><strong>Todos os dias</strong><span>08h às 18h30</span></div></div>
+        <div class="fact"><svg><use href="#i-pin"/></svg><div><strong>No Ibirapuera</strong><span>Pavilhão da Bienal</span></div></div>
+        <div class="fact"><svg><use href="#i-sparkle"/></svg><div><strong>Sem reservas</strong><span>Por ordem de chegada</span></div></div>
+      </div>
+      <div class="collage" aria-hidden="true">
+        <img class="c1" src="img/b/people-sm.webp" alt="" loading="lazy" data-speed="-0.12">
+        <img class="c2" src="img/b/smoohtie-nuvem-sm.webp" alt="" loading="lazy" data-speed="0.18">
+        <img class="c3" src="img/b/cafe-da-manha-sm.webp" alt="" loading="lazy" data-speed="-0.05">
+      </div>
+    </section>
+
+    <!-- MARQUEE -->
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee__row" data-dir="1"><span>brunch all day <i>✦</i> café de especialidade <i>✦</i> Parque Ibirapuera <i>✦</i> all night club <i>✦</i> smoothies &amp; bowls <i>✦</i>&nbsp;</span></div>
+      <div class="marquee__row marquee__row--alt" data-dir="-1"><span>matcha <i>✿</i> beneditino <i>✿</i> pancake <i>✿</i> cold brew <i>✿</i> nasi goreng <i>✿</i> foam season <i>✿</i>&nbsp;</span></div>
+    </div>
+
+    <!-- DESTAQUES -->
+    <section class="feature" id="destaques">
+      <div class="sechead">
+        <p class="eyebrow">Nova estação</p>
+        <h2 class="sechead__title"><em>Foam</em> Season</h2>
+        <p class="sechead__sub">Nova estação, novas cores, novos sabores — e uma nova textura. Toque nos cards para virar.</p>
+      </div>
+      <figure class="feature__banner tilt">
+        <img src="img/b/foam-season.webp" alt="Foam Season: nova estação, novas cores, novos sabores e uma nova textura" loading="lazy">
+      </figure>
+      <div class="flips" id="flips"></div>
+    </section>
+
+    <!-- CARDÁPIO -->
+    <section class="menu" id="cardapio">
+      <div class="sechead">
+        <p class="eyebrow">Cardápio completo</p>
+        <h2 class="sechead__title">O <em>cardápio</em></h2>
+        <p class="sechead__sub"><span id="menuCount">208</span> itens do cardápio oficial. Use a busca para pedir do seu jeito: <button class="link" data-open-search data-q="vegano até R$ 40">“vegano até R$ 40”</button>.</p>
+      </div>
+      <div class="menu__bar" id="menuBar">
+        <div class="tabs" id="tabs" role="tablist" aria-label="Categorias do cardápio"><span class="tabs__ink" aria-hidden="true"></span></div>
+        <button class="iconbtn menu__searchbtn" type="button" data-open-search aria-label="Buscar no cardápio"><svg><use href="#i-search"/></svg></button>
+      </div>
+      <div class="filters" id="filters" aria-label="Filtros alimentares">
+        <span class="filters__lbl">Filtrar</span>
+      </div>
+      <p class="filters__result" id="filterResult" aria-live="polite"></p>
+      <div class="menu__list" id="menuList"></div>
+      <p class="menu__src">Preços e itens conforme o cardápio digital oficial do Botanikafé. Sujeitos a alteração e disponibilidade na unidade.</p>
+    </section>
+
+    <!-- GALERIA -->
+    <section class="gallery" id="galeria">
+      <div class="sechead">
+        <p class="eyebrow">Galeria</p>
+        <h2 class="sechead__title">Dias no <em>parque</em></h2>
+        <p class="sechead__sub">Arraste para os lados.</p>
+      </div>
+      <div class="cf" id="coverflow">
+        <div class="cf__track" id="cfTrack" tabindex="0" aria-label="Galeria de fotos do Café Bienal"></div>
+        <button class="cf__nav cf__nav--prev" type="button" aria-label="Foto anterior"><svg><use href="#i-arrow"/></svg></button>
+        <button class="cf__nav cf__nav--next" type="button" aria-label="Próxima foto"><svg><use href="#i-arrow"/></svg></button>
+      </div>
+      <p class="cf__cap" id="cfCap" aria-live="polite"></p>
+    </section>
+
+    <!-- VISITE -->
+    <section class="visit" id="visite">
+      <div class="visit__card">
+        <div class="visit__info">
+          <p class="eyebrow">Visite</p>
+          <h2 class="visit__title">Café <em>Bienal</em></h2>
+          <p class="status status--lg" data-status><span class="status__dot"></span><span class="status__txt">Todos os dias · 08h às 18h30</span></p>
+          <dl class="visit__dl">
+            <div><dt>Endereço</dt><dd>Av. Pedro Álvares Cabral, s/n<br>Pavilhão da Bienal — Parque Ibirapuera<br>São Paulo · SP · 04094-000</dd></div>
+            <div><dt>Horário</dt><dd>Todos os dias, das 08h às 18h30</dd></div>
+            <div><dt>Reservas</dt><dd>Por questões estruturais, a unidade não trabalha com reservas. Atendimento por ordem de chegada.</dd></div>
+          </dl>
+          <div class="visit__actions">
+            <a class="btn btn--primary magnetic" href="https://maps.app.goo.gl/bf59Dwpuub3JVKvJ6" target="_blank" rel="noopener"><svg><use href="#i-pin"/></svg>Como chegar</a>
+            <a class="btn magnetic" href="https://wa.me/5511915059570" target="_blank" rel="noopener"><svg><use href="#i-wa"/></svg>WhatsApp</a>
+            <button class="btn btn--ghost" type="button" id="copyAddr"><svg><use href="#i-copy"/></svg>Copiar endereço</button>
+          </div>
+          <p class="visit__contact"><a href="mailto:bienal@botanikafe.com"><svg><use href="#i-mail"/></svg>bienal@botanikafe.com</a> <a href="tel:+5511915059570">(11) 91505-9570</a></p>
+        </div>
+        <a class="visit__map" href="https://maps.app.goo.gl/bf59Dwpuub3JVKvJ6" target="_blank" rel="noopener" aria-label="Abrir mapa do Café Bienal no Google Maps">
+          <img src="img/b/mapa-cafe-bienal.webp" alt="Mapa do Parque Ibirapuera com a localização do Café Bienal" loading="lazy">
+          <span class="visit__pin"><svg><use href="#logo"/></svg></span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="ftr">
+    <svg class="ftr__logo" aria-hidden="true"><use href="#logo"/></svg>
+    <p class="ftr__big" aria-hidden="true"><em>B</em>otanikafé</p>
+    <p class="ftr__tag">all day · all night club</p>
+    <div class="ftr__links">
+      <a href="https://www.instagram.com/botanikafe/" target="_blank" rel="noopener"><svg><use href="#i-insta"/></svg>@botanikafe</a>
+      <a href="https://www.botanikafe.com/" target="_blank" rel="noopener">botanikafe.com</a>
+      <a href="https://beta.livemenu.app/pt/menu/6345cb46816e27004a692837" target="_blank" rel="noopener">Cardápio oficial</a>
+    </div>
+    <p class="ftr__fine">Botanikafé · Café Bienal — Av. Pedro Álvares Cabral, s/n · Parque Ibirapuera · São Paulo</p>
+    <p class="ftr__fine">Projeto conceito de redesign · não é o site oficial do Botanikafé. Fotos e cardápio: botanikafe.com e LiveMenu.</p>
+  </footer>
+
+  <!-- Dock mobile -->
+  <nav class="dock" aria-label="Navegação rápida">
+    <a href="#inicio" data-dock="inicio"><svg><use href="#i-home"/></svg><span>Início</span></a>
+    <a href="#cardapio" data-dock="cardapio"><svg><use href="#i-menu"/></svg><span>Cardápio</span></a>
+    <button type="button" class="dock__search" data-open-search aria-label="Buscar no cardápio"><svg><use href="#i-search"/></svg></button>
+    <a href="#galeria" data-dock="galeria"><svg><use href="#i-image"/></svg><span>Galeria</span></a>
+    <a href="#visite" data-dock="visite"><svg><use href="#i-pin"/></svg><span>Visite</span></a>
+  </nav>
+
+  <!-- Busca inteligente -->
+  <div class="search" id="search" role="dialog" aria-modal="true" aria-label="Busca inteligente no cardápio" hidden>
+    <div class="search__backdrop" data-close-search></div>
+    <div class="search__panel">
+      <div class="search__bar">
+        <svg class="search__ic"><use href="#i-search"/></svg>
+        <input id="q" type="search" autocomplete="off" spellcheck="false" enterkeyhint="search" placeholder="O que você quer hoje?" aria-label="Buscar no cardápio" aria-controls="results" aria-autocomplete="list">
+        <button class="iconbtn search__mic" type="button" id="micBtn" aria-label="Buscar por voz" hidden><svg><use href="#i-mic"/></svg></button>
+        <button class="search__close" type="button" data-close-search>Fechar</button>
+      </div>
+      <div class="search__intent" id="intent" aria-live="polite"></div>
+      <div class="search__body" id="searchBody">
+        <div class="search__empty" id="searchEmpty">
+          <p class="search__h">Peça do seu jeito</p>
+          <div class="search__sugs" id="sugs"></div>
+          <div id="recentWrap" hidden>
+            <p class="search__h">Buscas recentes <button class="link" id="clearRecent" type="button">limpar</button></p>
+            <div class="search__sugs" id="recent"></div>
+          </div>
+          <p class="search__h">Explorar</p>
+          <div class="search__cats" id="searchCats"></div>
+        </div>
+        <ul class="results" id="results" role="listbox" aria-label="Resultados"></ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom sheet do item -->
+  <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetName" hidden>
+    <div class="sheet__backdrop" data-close-sheet></div>
+    <article class="sheet__panel" id="sheetPanel">
+      <div class="sheet__grab" aria-hidden="true"></div>
+      <button class="sheet__x iconbtn" type="button" data-close-sheet aria-label="Fechar"><svg><use href="#i-x"/></svg></button>
+      <figure class="sheet__media" id="sheetMedia"><img id="sheetImg" alt=""></figure>
+      <div class="sheet__content">
+        <p class="sheet__crumb" id="sheetCrumb"></p>
+        <h3 class="sheet__name" id="sheetName"></h3>
+        <p class="sheet__desc" id="sheetDesc"></p>
+        <div class="sheet__tags" id="sheetTags"></div>
+        <div class="sheet__opts" id="sheetOpts"></div>
+        <div class="sheet__foot">
+          <p class="sheet__price" id="sheetPrice"></p>
+          <button class="btn btn--primary" type="button" id="shareItem"><svg><use href="#i-share"/></svg>Compartilhar</button>
+        </div>
+      </div>
+    </article>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="vendor/gsap.min.js"></script>
+  <script src="vendor/ScrollTrigger.min.js"></script>
+  <script src="vendor/lenis.min.js"></script>
+  <script src="js/menu-data.js"></script>
+  <script src="js/search.js"></script>
+  <script src="js/app.js"></script>
+  <script type="module" src="js/hero3d.js"></script>
+</body>
+</html>
