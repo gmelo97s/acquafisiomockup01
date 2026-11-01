@@ -185,9 +185,14 @@
     });
   }, { rootMargin: '0px 0px -6% 0px' });
   const css = document.createElement('style');
-  css.textContent = '.js .rv{transition:opacity .7s,transform .9s var(--ease-out)}.js .rv.in{opacity:1;transform:none}';
+  css.textContent = '.js .rv{transition:opacity .7s,transform .9s var(--ease-out)}.js .item.rv{transform:translateY(14px);transition:opacity .45s,transform .6s var(--ease-out)}.js .rv.in{opacity:1;transform:none}';
   document.head.appendChild(css);
-  if (reduced) $$('.rv').forEach((el) => el.classList.add('in')); else $$('.rv').forEach((el) => revealIO.observe(el));
+  // itens do cardápio revelam antes de entrar na tela (sem "buracos" ao pular de categoria)
+  const itemIO = new IntersectionObserver((ents) => {
+    ents.forEach((en) => { if (en.isIntersecting) { en.target.classList.add('in'); itemIO.unobserve(en.target); } });
+  }, { rootMargin: '0px 0px 40% 0px' });
+  if (reduced) $$('.rv').forEach((el) => el.classList.add('in'));
+  else $$('.rv').forEach((el) => (el.classList.contains('item') ? itemIO : revealIO).observe(el));
 
   // tabs: tinta deslizante + seção ativa
   function moveInk(btn) {
@@ -204,6 +209,7 @@
   tabsEl.addEventListener('click', (e) => {
     const b = e.target.closest('.tab'); if (!b) return;
     setActiveTab(b.dataset.cat); tabLock = Date.now() + 1300;
+    $$('#cat-' + b.dataset.cat + ' .rv').forEach((el) => el.classList.add('in'));
     scrollToEl($('#cat-' + b.dataset.cat), -(parseInt(getComputedStyle(root).getPropertyValue('--hdr-h')) + 64));
   });
   const catIO = new IntersectionObserver((ents) => {
