@@ -405,17 +405,21 @@
   function runSearch() {
     const q = qEl.value.trim(); kbIdx = -1;
     clearTimeout(emptyT);
-    searchEl.classList.toggle('has-q', q.length >= 2);
-    if (q.length < 2) { intentEl.innerHTML = ''; resultsEl.innerHTML = ''; lastGood = ''; shown = new Set(); return; }
+    if (q.length < 2) { searchEl.classList.remove('has-q'); intentEl.innerHTML = ''; resultsEl.innerHTML = ''; lastGood = ''; shown = new Set(); return; }
     const r = S.search(q, { disabled });
-    // ainda digitando ("vegano até R$ 4…"): mantém os últimos resultados por um instante, sem piscar "nada encontrado"
-    if (!r.results.length && lastGood && q.length > lastGood.length && q.toLowerCase().startsWith(lastGood.toLowerCase())) {
-      emptyT = setTimeout(() => renderSearch(q, r), 700);
-      return;
+    if (!r.results.length) {
+      // ditando por voz ("quero um…"): espera a frase ganhar sentido antes de dizer "nada encontrado"
+      if (document.getElementById('micBtn').classList.contains('listening')) return;
+      // ainda digitando ("vegano até R$ 4…"): mantém os últimos resultados por um instante
+      if (lastGood && q.length > lastGood.length && q.toLowerCase().startsWith(lastGood.toLowerCase())) {
+        emptyT = setTimeout(() => renderSearch(q, r), 700);
+        return;
+      }
     }
     renderSearch(q, r);
   }
   function renderSearch(q, r) {
+    searchEl.classList.add('has-q');
     intentEl.innerHTML = r.intent.chips.map((c) => `<span class="ichip">${esc(c.label)}<button type="button" data-unchip="${esc(c.label)}" aria-label="Remover ${esc(c.label)}"><svg><use href="#i-x"/></svg></button></span>`).join('');
     if (!r.results.length) {
       shown = new Set();
@@ -448,7 +452,7 @@
       try { rec.start(); } catch (e) { stopVoice(); }
     });
   }
-  function stopVoice() { if (rec) { try { rec.stop(); } catch (e) { /* ok */ } } rec = null; micBtn.classList.remove('listening'); qEl.placeholder = 'O que você quer hoje?'; }
+  function stopVoice() { if (rec) { try { rec.stop(); } catch (e) { /* ok */ } } rec = null; micBtn.classList.remove('listening'); qEl.placeholder = 'O que você quer hoje?'; runSearch(); }
 
   // =========================================================
   // FICHA DO ITEM (+ "combina com")
