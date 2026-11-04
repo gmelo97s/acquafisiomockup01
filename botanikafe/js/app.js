@@ -401,24 +401,38 @@
     if (!set || !set.size) return esc(name);
     return name.split(/(\s+)/).map((tok) => { const n = S.norm(tok).replace(/[^a-z0-9]/g, ''); return n && set.has(n) ? `<mark>${esc(tok)}</mark>` : esc(tok); }).join('');
   }
+  let lastGood = '', emptyT = 0, shown = new Set();
   function runSearch() {
     const q = qEl.value.trim(); kbIdx = -1;
-    searchEl.classList.toggle('has-q', !!q);
-    if (!q) { intentEl.innerHTML = ''; resultsEl.innerHTML = ''; return; }
+    clearTimeout(emptyT);
+    searchEl.classList.toggle('has-q', q.length >= 2);
+    if (q.length < 2) { intentEl.innerHTML = ''; resultsEl.innerHTML = ''; lastGood = ''; shown = new Set(); return; }
     const r = S.search(q, { disabled });
+    // ainda digitando ("vegano até R$ 4…"): mantém os últimos resultados por um instante, sem piscar "nada encontrado"
+    if (!r.results.length && lastGood && q.length > lastGood.length && q.toLowerCase().startsWith(lastGood.toLowerCase())) {
+      emptyT = setTimeout(() => renderSearch(q, r), 700);
+      return;
+    }
+    renderSearch(q, r);
+  }
+  function renderSearch(q, r) {
     intentEl.innerHTML = r.intent.chips.map((c) => `<span class="ichip">${esc(c.label)}<button type="button" data-unchip="${esc(c.label)}" aria-label="Remover ${esc(c.label)}"><svg><use href="#i-x"/></svg></button></span>`).join('');
     if (!r.results.length) {
+      shown = new Set();
       resultsEl.innerHTML = `<li class="noresults"><svg aria-hidden="true"><use href="#logo"/></svg><p>Nada encontrado para <strong>“${esc(q)}”</strong>.</p>
         ${r.suggestion ? `<p>Você quis dizer <button class="chip" type="button" data-sug="${esc(r.suggestion)}">${esc(r.suggestion)}</button>?</p>` : ''}
         <p>Tente: ${['matcha', 'vegano', 'até R$ 30', 'pancake'].map((s) => `<button class="chip" type="button" data-sug="${s}">${s}</button>`).join('')}</p></li>`;
       return;
     }
-    const n = r.results.length;
+    const n = r.results.length; lastGood = q;
+    // enquanto digita, só as linhas novas entram animadas; as que já estavam ficam paradas (sem piscar)
+    const list = r.results.slice(0, 60); let k = 0;
+    const was = shown; shown = new Set(list.map((x) => x.item.id));
     resultsEl.innerHTML = `<li class="results__meta"><strong>${n}</strong> ${n === 1 ? 'resultado' : 'resultados'}${r.relaxed ? ' parecidos' : ''}</li>` +
-      r.results.slice(0, 60).map((x, i) => `<li class="res" role="option" data-id="${x.item.id}" style="animation-delay:${Math.min(i * 22, 300)}ms">
+      list.map((x) => { const still = was.has(x.item.id); return `<li class="res${still ? ' res--still' : ''}" role="option" data-id="${x.item.id}"${still ? '' : ` style="animation-delay:${Math.min(k++ * 22, 300)}ms"`}>
         ${x.item.i ? `<img class="res__img${isTall(x.item) ? ' is-tall' : ''}" src="${x.item.i}" alt="" loading="lazy">` : `<span class="res__img"></span>`}
         <span class="res__t"><span class="res__n">${hl(x.item.n, x.hl)}</span><span class="res__c">${esc([catName(x.cat)].concat(x.also).join(' · '))} › ${esc(x.sec.n)}${x.item.t && x.item.t.length ? ' · ' + x.item.t.map((t) => (TAGS[t] || [t])[0]).join(', ') : ''}</span></span>
-        <span class="res__p">${esc(priceText(x.item))}</span></li>`).join('');
+        <span class="res__p">${esc(priceText(x.item))}</span></li>`; }).join('');
   }
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition; let rec = null;
   const micBtn = $('#micBtn');

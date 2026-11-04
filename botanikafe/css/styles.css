@@ -348,6 +348,7 @@ html.gate-on .doors, html.gate-on .gate__glow, html.gate-on .gate__pulse { displ
 .res__c { display: block; font-size: 12.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .res__p { font-weight: 600; font-size: 14px; font-variant-numeric: tabular-nums; }
 @keyframes rise { from { opacity: 0; transform: translateY(10px); } }
+.res--still { animation: none; }
 .noresults { padding: 30px var(--gutter); text-align: center; color: var(--muted); }
 .noresults svg { width: 40px; height: 62px; color: var(--olive); opacity: .5; }
 .noresults p { margin: 10px 0; }
