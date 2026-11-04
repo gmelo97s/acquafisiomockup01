@@ -1,32 +1,52 @@
-# Botanikafé · Café Bienal — site conceito
+# Botanikafé · Cardápio (projeto conceito)
 
-Site estático (HTML/CSS/JS, sem build). Mobile first, hero 3D (Three.js), animações GSAP/ScrollTrigger, busca inteligente no cardápio e tema dia/noite.
+Cardápio digital estático (HTML/CSS/JS, sem build), mobile first, com cara de app.
 
-- Cardápio: 208 itens extraídos do LiveMenu oficial (`js/menu-data.js`)
-- Fotos: botanikafe.com (unidade Café Bienal) e LiveMenu (`img/`)
-- Logo: símbolo da foto de perfil do @botanikafe (vetor em `img/brand/symbol.svg`)
+No ar: https://botanikafe.vercel.app
 
-## Publicar na Vercel
+## O que tem
 
-**Pelo painel:** vercel.com/new → Import Git Repository → `acquafisiomockup01` → em *Root Directory* escolha `botanikafe` → Framework Preset: *Other* → Deploy.
-O site está no branch `botanikafe-site`; para produção, faça o merge no `main` ou escolha esse branch em *Settings → Git → Production Branch*.
+- **Abertura com a chave**: ao rolar (ou tocar em "Abrir o cardápio"), o logo 3D vai ao centro, gira como uma chave, as portas se abrem e o logo pousa no topo.
+- **Novidades**: carrossel com toque direto (sem precisar virar card), parallax nas fotos e inclinação 3D no desktop.
+- **Cardápio completo**: 208 itens, abas por categoria, filtros (vegano, sem glúten etc.), fotos de garrafa sem corte.
+- **"Combina com"**: ao abrir uma bebida, sugere 3 comidas; ao abrir uma comida, sugere 3 bebidas (`js/pairings.js`).
+- **Busca em linguagem natural**: "vegano até R$ 40", "café gelado", "beneditino sem salmão", com correção de erros de digitação e busca por voz.
+- **Galeria** em loop automático e arrastável.
+- **Folhas animadas** nas transições (`js/leaves.js`), poucas e rápidas.
+- **Modo dia/noite**, instalável como app (`manifest.webmanifest`).
 
-**Pela CLI:**
+## Arquivos
+
+| Arquivo | Para quê |
+|---|---|
+| `index.html` | Estrutura da página |
+| `css/styles.css` | Visual (cores da marca nas variáveis do `:root`) |
+| `js/menu-data.js` | Cardápio (`window.MENU`), preços em centavos |
+| `js/pairings.js` | Regras de "combina com" |
+| `js/search.js` | Busca inteligente |
+| `js/hero3d.js` | Logo 3D, folhas e grãos (Three.js) |
+| `js/leaves.js` | Folhas 2D das transições |
+| `js/app.js` | Interface, abertura com a chave, galeria, ficha do item |
+
+## Usar como modelo para outro restaurante
+
+1. Troque `js/menu-data.js` e as fotos em `img/m/` pelo cardápio do restaurante (mesmo formato).
+2. Troque o símbolo do logo (`<symbol id="logo">` no `index.html`) e as cores no `:root` do CSS.
+3. Ajuste as regras de `js/pairings.js` aos nomes dos novos itens.
+4. Troque textos do topo, endereço e fotos da galeria.
+
+## Publicar
+
+Pela CLI da Vercel, dentro desta pasta:
 
 ```bash
-cd botanikafe
 npx vercel --prod
 ```
 
 ## Rodar localmente
 
 ```bash
-cd botanikafe
 python3 -m http.server 8080   # abra http://localhost:8080
 ```
 
-(É preciso um servidor local: o hero 3D usa módulos ES, que não abrem via `file://`.)
-
-## Editar o cardápio
-
-Os itens estão em `js/menu-data.js` (`window.MENU`). Preços em centavos (`p: 3800` = R$ 38). Tags aceitas: `Vegano`, `Vegetariano`, `Sem Gluten`, `Sem Lactose`, `Sem açúcar`, `Apimentado`, `Levemente Apimentado`.
+É preciso um servidor local porque o 3D usa módulos ES (não abre via `file://`).
