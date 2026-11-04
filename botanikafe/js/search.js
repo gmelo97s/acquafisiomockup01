@@ -11,7 +11,7 @@
   const words = (s) => norm(s).replace(/[^a-z0-9$]+/g, ' ').split(' ').filter(Boolean);
 
   // ---------- dicionários ----------
-  const STOP = new Set('de da do das dos com e o a os as um uma uns umas para pra pro pros que quero queria queremos gostaria algo alguma algum alguns sem ate coisa coisas tem tenho voces vcs me mostra mostre mostrar ver opcao opcoes no na nos nas em por favor bem muito bom boa gostoso gostosa delicioso deliciosa tipo so ai hoje agora aqui la isso esse essa quais qual como pode ser bem mais menos to tô estou com fome fome ou r$ reais real conto pila preco valor custa custando'.split(' '));
+  const STOP = new Set('de da do das dos com e o a os as um uma uns umas para pra pro pros que quero queria queremos gostaria algo alguma algum alguns sem ate coisa coisas tem tenho voces vcs me mostra mostre mostrar ver opcao opcoes no na nos nas em por favor bem muito bom boa gostoso gostosa delicioso deliciosa tipo so ai hoje agora aqui la isso esse essa quais qual como pode ser bem mais menos to tô estou com fome fome ou r$ reais real conto pila preco valor custa custando voce pessoa pessoas verdade'.split(' '));
 
   // tags oficiais do cardápio
   const DIET = [
@@ -27,7 +27,7 @@
   const CONCEPTS = [
     { re: /\b(gelad[oa]s?|iced|ice|frio|fria|frios|refrescante|cold|geladinho)\b/, label: 'Gelado', alts: ['gelado', 'gelada', 'gelo', 'iced', 'cold', 'smoothie', 'suco', 'foam', 'lemonade', 'tonica', 'cha gelado', 'sec:cha gelado', 'sec:smoothie', 'sec:detox', 'cat:cervejas', 'sec:mocktail'] },
     { re: /\b(quente|quentinho|hot|esquentar)\b/, label: 'Quente', alts: ['quente', 'sec:espresso', 'sec:filtrado', 'sec:infusao', 'sec:lab', 'chai', 'latte', 'cappuccino', 'mocha'] },
-    { re: /\bcafe da manha\b|\bbreakfast\b|\bde manha\b|\bmanha\b|\bmatinal\b/, label: 'Café da manhã', alts: ['cat:brunch', 'sec:morning start', 'sec:morning shot', 'sec:espresso', 'sec:filtrado', 'sec:lab', 'sec:bowl', 'sec:suco simples'] },
+    { re: /\bcafe da manha\b|\bbreakfast\b|\bde manha\b|\bmanha\b|\bmatinal\b/, label: 'Café da manhã', alts: ['sec:toast', 'sec:mexido', 'sec:pancake', 'sec:beneditino', 'sec:sanduba', 'sec:simples', 'sec:morning start', 'sec:bowl', 'sec:morning shot', 'sec:espresso', 'sec:filtrado', 'sec:lab', 'sec:suco simples'] },
     { re: /\bbrunch\b/, label: 'Brunch', alts: ['cat:brunch'] },
     { re: /\b(almoco|almocar|lunch)\b/, label: 'Almoço', alts: ['cat:lunch'] },
     { re: /\b(jantar|janta|dinner|noite)\b/, label: 'Jantar', alts: ['cat:dinner'] },
@@ -55,6 +55,7 @@
     smoothie: ['sec:smoothie', 'sec:smoothie proteico'], vitamina: ['smoothie'], agua: ['agua', 'water'], refri: ['sec:soft'], refrigerante: ['sec:soft'],
     picles: ['pickles'], pimenta: ['apimentado'], massa: ['noodles', 'mie'], macarrao: ['noodles', 'mie'], arroz: ['nasi', 'rice'], peixe: ['salmao', 'atum', 'tuna'], atum: ['tuna'],
     banana: ['banana'], coco: ['coco', 'cupuacu'], gin: ['gin'], vodka: ['vodka'], tequila: ['tequila'], cachaca: ['cachaca', 'caipirinha'], rum: ['rum'],
+    capuccino: ['cappuccino'], cappucino: ['cappuccino'], capucino: ['cappuccino'], capuchino: ['cappuccino'], caputino: ['cappuccino'], capuccinos: ['cappuccino'],
     sem: [], ate: [],
   };
 
@@ -141,9 +142,31 @@
     return s;
   }
 
+  // ---------- fala natural ----------
+  // "um suco de laranja… um suco de morango, na verdade" → "suco de morango"
+  // "quais opções de cappuccino você tem?" → "cappuccino"
+  const CORR_TEST = /\b(?:na verdade|alias|ou melhor|quer dizer|melhor dizendo)\b/;
+  const CORR_SPLIT = /\b(?:na verdade|alias|ou melhor|quer dizer|melhor dizendo)\b/g;
+  function clean(raw) {
+    let q = ' ' + norm(raw).replace(/[“”"'?!.,;:¿¡…]+/g, ' ').replace(/\s+/g, ' ') + ' ';
+    if (CORR_TEST.test(q)) {
+      const parts = q.split(CORR_SPLIT).map((x) => x.trim());
+      const after = parts[parts.length - 1];
+      if (after) q = ' ' + after + ' ';
+      else {
+        const before = parts.slice(0, -1).join(' ');
+        const segs = before.split(/\b(?:um|uma|uns|umas)\b/).map((x) => x.trim()).filter(Boolean);
+        q = ' ' + (segs.length > 1 ? segs[segs.length - 1] : before) + ' ';
+      }
+    }
+    q = q.replace(/\b(?:para|pra)\s+(?:duas|dois|tres|quatro|2|3|4)(?:\s+pessoas)?\b|\bpara o casal\b|\ba dois\b/g, ' ');
+    q = q.replace(/\b(?:quais|qual)\s+(?:sao\s+)?(?:as\s+)?opcoes\s+de\b|\b(?:voce|voces|vcs)\s+(?:tem|teria|tem ai)\b|\b(?:eu\s+)?(?:quero|queria|gostaria de)\b|\bme\s+(?:ve|da|traz)\b/g, ' ');
+    return q.replace(/\s+/g, ' ');
+  }
+
   // ---------- parser ----------
   function parse(raw) {
-    let q = ' ' + norm(raw).replace(/[“”"']/g, ' ').replace(/\s+/g, ' ') + ' ';
+    let q = ' ' + clean(raw).trim() + ' ';
     const intent = { tags: [], price: null, sort: null, groups: [], neg: [] };
 
     // preço
@@ -201,8 +224,35 @@
   }
   const fmtN = (n) => (Number.isInteger(n) ? String(n) : n.toFixed(2).replace('.', ','));
 
+  // ---------- pedidos de harmonização ----------
+  // "sugestão de drink para acompanhar o prato vegano", "bebida para comer com ovo e bacon"
+  const PAIR_ASK = /\b(?:sugest\w*|sugir\w*|sugere|indic\w*|recomend\w*|combin\w*|harmoniz\w*|vai bem|acompanh\w*)\b/;
+  const PAIR_DRINK = /\b(?:drinks?|bebidas?|vinhos?|sucos?|cafes?|cervejas?|beber|tomar)\b/;
+  const PAIR_DISH = /\b(?:para acompanhar|pra acompanhar|acompanhar|para comer com|pra comer com|comer com|tomar com|combina com|combinar com|vai bem com|harmoniza com|harmonizar com|junto com)\s+(.+)$/;
+  let lastDish = null; // o prato da conversa ("o prato vegano" que acabou de aparecer)
+  function pairSearch(raw, opts) {
+    const P = window.Pairings; if (!P) return null;
+    const q = norm(raw).replace(/[“”"'?!.,;:]+/g, ' ').replace(/\s+/g, ' ').trim();
+    if (!PAIR_ASK.test(q) || !PAIR_DRINK.test(q)) return null;
+    const m = q.match(PAIR_DISH); if (!m) return null;
+    const dishQ = (' ' + m[1] + ' ').replace(/\s(?:o|a|os|as|um|uma|meu|minha|esse|essa|este|esta|isso)(?=\s)/g, ' ').trim();
+    if (!dishQ) return null;
+    const label = (d) => 'Combina com ' + d.item.n;
+    const food = (x) => !P.isDrink({ it: x.item, cat: x.cat, sec: x.sec });
+    const found = search(dishQ + ' comida', Object.assign({}, opts, { noPair: true, keepDish: true })).results.filter(food);
+    let dish = lastDish && found.find((x) => x.item === lastDish.item) ? lastDish : found[0];
+    if (!dish || (opts.disabled && opts.disabled.has(label(dish)))) return null;
+    const sug = P.suggest({ it: dish.item, cat: dish.cat, sec: dish.sec }, 4);
+    if (!sug) return null;
+    let items = sug.items;
+    if (/\bdrinks?\b|\bcoquete/.test(q)) { const alc = items.filter((r) => /^(drinks|vinhos|cervejas)$/.test(r.cat.id)); if (alc.length) items = alc; }
+    const results = items.map((r) => ({ item: r.it, cat: r.cat, sec: r.sec, score: 1, hl: new Set(), also: [] }));
+    return { intent: { chips: [{ k: 'pair', label: label(dish) }], tags: [], groups: [], neg: [] }, results, relaxed: false, suggestion: null, pair: dish };
+  }
+
   // ---------- busca ----------
   function search(raw, opts = {}) {
+    if (!opts.noPair) { const pr = pairSearch(raw, opts); if (pr) return pr; }
     const intent = parse(raw);
     const dis = opts.disabled || new Set();
     intent.tags = intent.tags.filter((t) => !dis.has(t.label));
@@ -264,6 +314,9 @@
       const o = { item: r.e.it, cat: r.e.cat, sec: r.e.sec, score: r.score, hl: r.hl, also: [] };
       seen.set(k, o); out.push(o);
     }
+
+    // lembra o prato que apareceu primeiro (para "sugestão de drink para o prato vegano")
+    if (!opts.keepDish && out.length && window.Pairings && !window.Pairings.isDrink({ it: out[0].item, cat: out[0].cat, sec: out[0].sec })) lastDish = out[0];
 
     // "você quis dizer"
     let suggestion = null;

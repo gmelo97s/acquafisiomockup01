@@ -432,7 +432,8 @@
     // enquanto digita, só as linhas novas entram animadas; as que já estavam ficam paradas (sem piscar)
     const list = r.results.slice(0, 60); let k = 0;
     const was = shown; shown = new Set(list.map((x) => x.item.id));
-    resultsEl.innerHTML = `<li class="results__meta"><strong>${n}</strong> ${n === 1 ? 'resultado' : 'resultados'}${r.relaxed ? ' parecidos' : ''}</li>` +
+    const meta = r.pair ? `<strong>${n}</strong> ${n === 1 ? 'sugestão' : 'sugestões'} para acompanhar <strong>${esc(r.pair.item.n)}</strong>` : `<strong>${n}</strong> ${n === 1 ? 'resultado' : 'resultados'}${r.relaxed ? ' parecidos' : ''}`;
+    resultsEl.innerHTML = `<li class="results__meta">${meta}</li>` +
       list.map((x) => { const still = was.has(x.item.id); return `<li class="res${still ? ' res--still' : ''}" role="option" data-id="${x.item.id}"${still ? '' : ` style="animation-delay:${Math.min(k++ * 22, 300)}ms"`}>
         ${x.item.i ? `<img class="res__img${isTall(x.item) ? ' is-tall' : ''}" src="${x.item.i}" alt="" loading="lazy">` : `<span class="res__img"></span>`}
         <span class="res__t"><span class="res__n">${hl(x.item.n, x.hl)}</span><span class="res__c">${esc([catName(x.cat)].concat(x.also).join(' · '))} › ${esc(x.sec.n)}${x.item.t && x.item.t.length ? ' · ' + x.item.t.map((t) => (TAGS[t] || [t])[0]).join(', ') : ''}</span></span>
