@@ -8,8 +8,16 @@
   'use strict';
   const norm = (s) => (s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[º°]/g, 'o').toLowerCase().trim();
 
-  // Itens que não fazem sentido sugerir nem receber sugestão
+  // Itens que não fazem sentido aparecer como sugestão de outro item
   const SKIP = ['graos', 'vegetal', 'zero lactose', 'add ons', 'agua com gas', 'agua sem gas'];
+
+  // Itens que não são prato nem bebida comum: sugestão com título próprio
+  const CUSTOM = {
+    'graos': ['Prove aqui antes de levar', ['Colômbia Orquídea by Culto', 'Microlotes', 'Botanikafé Orgânico']],
+    'vegetal': ['Fica ótimo em', ['Latte', 'Cappuccino', 'Matcha Latte (quente ou gelado)']],
+    'zero lactose': ['Fica ótimo em', ['Cappuccino', 'Latte', 'Flat White']],
+    'add ons': ['Para turbinar', ['Açaí Original', 'Pitaya Botanik', 'Berry Blast']],
+  };
 
   // Por item (nome normalizado) — tem prioridade
   const ITEM = {
@@ -196,18 +204,18 @@
   function suggest(rec, n = 3) {
     if (!BY_NAME) index(window.MENU);
     const key = norm(rec.it.n);
-    if (SKIP.includes(key)) return null;
-    const list = ITEM[key] || SEC[rec.cat.id + '/' + norm(rec.sec.n)] || null;
+    const custom = CUSTOM[key];
+    const list = custom ? custom[1] : ITEM[key] || SEC[rec.cat.id + '/' + norm(rec.sec.n)] || null;
     if (!list) return null;
     const out = [], seen = new Set([key]);
     for (const name of list) {
-      const k = norm(name); if (seen.has(k)) continue;
+      const k = norm(name); if (seen.has(k) || SKIP.includes(k)) continue;
       const r = BY_NAME.get(k); if (!r) continue;
       seen.add(k); out.push(r);
       if (out.length >= n) break;
     }
     if (!out.length) return null;
-    return { title: isDrink(rec) ? 'Para acompanhar' : 'Para beber junto', items: out };
+    return { title: custom ? custom[0] : isDrink(rec) ? 'Para acompanhar' : 'Para beber junto', items: out };
   }
 
   window.Pairings = { suggest, isDrink, index };

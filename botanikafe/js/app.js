@@ -23,7 +23,8 @@
     'Vegano': ['Vegano', ''], 'Vegetariano': ['Vegetariano', ''], 'Sem Gluten': ['Sem glúten', ''], 'Sem Lactose': ['Sem lactose', ''],
     'Sem açúcar': ['Sem açúcar', ''], 'Apimentado': ['Picante', 'tag--hot'], 'Levemente Apimentado': ['Levemente picante', 'tag--hot'],
   };
-  const tagHTML = (t) => { const m = TAGS[t] || [t, '']; return `<span class="tag ${m[1]}">${esc(m[0])}</span>`; };
+  const tagHTML = (t) => { const m = TAGS[t] || [t, '']; return `<span class="tag ${m[1]}" data-tag="${esc(t)}">${esc(m[0])}</span>`; };
+  const tagBtnHTML = (t) => { const m = TAGS[t] || [t, '']; return `<button class="tag tag--btn ${m[1]}" type="button" data-tag="${esc(t)}" aria-label="Ver todos os itens: ${esc(m[0])}">${esc(m[0])}<svg aria-hidden="true"><use href="#i-search"/></svg></button>`; };
   const isTall = (it) => it.r && it.r > 1.25;
   const catName = (cat) => (cat.id === 'foam' ? 'Novidades' : cat.n);
 
@@ -33,13 +34,26 @@
   if (P) P.index(MENU);
 
   const minSize = (it) => Math.min(...it.s.map((s) => s.p));
-  function priceHTML(it) {
-    if (!it.p) return '';
-    if (it.s && it.s.length > 1) return `<span class="price"><small>a partir de</small>${fmt(minSize(it))}</span>`;
-    if (it.s && it.s.length === 1 && it.s[0].l) return `<span class="price">${fmt(it.s[0].p)} <small>${esc(it.s[0].l)}</small></span>`;
-    return `<span class="price">${fmt(it.p)}</span>`;
+  // preço exibido: único, "a partir de" (tamanhos ou adicionais) ou nenhum ("consulte", como no cardápio oficial)
+  function priceInfo(it) {
+    if (it.p) {
+      if (it.s && it.s.length > 1) return { from: true, v: minSize(it) };
+      if (it.s && it.s.length === 1) return { v: it.s[0].p, l: it.s[0].l };
+      return { v: it.p };
+    }
+    const xs = (it.x || []).flatMap((g) => g.c.map((c) => c.p)).filter((p) => p > 0);
+    return xs.length ? { from: true, v: Math.min(...xs) } : null;
   }
-  const priceText = (it) => (it.p ? (it.s && it.s.length > 1 ? 'a partir de ' + fmt(minSize(it)) : fmt(it.s && it.s.length === 1 ? it.s[0].p : it.p)) : '');
+  function priceHTML(it) {
+    const pi = priceInfo(it);
+    if (!pi) return '<span class="price price--ask">consulte</span>';
+    if (pi.from) return `<span class="price"><small>a partir de</small>${fmt(pi.v)}</span>`;
+    if (pi.l) return `<span class="price">${fmt(pi.v)} <small>${esc(pi.l)}</small></span>`;
+    return `<span class="price">${fmt(pi.v)}</span>`;
+  }
+  const priceText = (it) => { const pi = priceInfo(it); return pi ? (pi.from ? 'a partir de ' : '') + fmt(pi.v) : ''; };
+  // tags oficiais → busca que mostra todos os itens com a mesma tag
+  const TAG_Q = { 'Vegano': 'vegano', 'Vegetariano': 'vegetariano', 'Sem Gluten': 'sem glúten', 'Sem Lactose': 'sem lactose', 'Sem açúcar': 'sem açúcar', 'Apimentado': 'picante', 'Levemente Apimentado': 'levemente picante' };
 
   const toastEl = $('#toast'); let toastT;
   function toast(msg) { toastEl.textContent = msg; toastEl.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => toastEl.classList.remove('show'), 2200); }
@@ -64,7 +78,8 @@
   addEventListener('touchstart', stopScrollAnim, { passive: true });
   function scrollToY(y, dur) {
     y = Math.max(0, Math.min(y, root.scrollHeight - innerHeight));
-    if (lenis) { lenis.scrollTo(y, { duration: (dur || 1200) / 1000 }); return; }
+    // trajetos longos (atravessar a porta) com aceleração e freio suaves, para dar tempo de ver a chave e a porta
+    if (lenis) { lenis.scrollTo(y, dur >= 2000 ? { duration: dur / 1000, easing: (k) => (k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2) } : { duration: (dur || 1200) / 1000 }); return; }
     if (reduced) { window.scrollTo(0, y); return; }
     stopScrollAnim();
     const y0 = scrollY, d = y - y0, T = dur || Math.min(1400, 450 + Math.abs(d) * 0.3), t0 = performance.now();
@@ -87,7 +102,7 @@
     const id = a.getAttribute('href'); if (id.length < 2 || !$(id)) return;
     e.preventDefault();
     const throughGate = gateOn && scrollY < docTop($('#cardapio')) - 10 && id !== '#inicio';
-    goTo(id, a.hasAttribute('data-open-menu') || (throughGate && id === '#cardapio') ? 2600 : undefined);
+    goTo(id, a.hasAttribute('data-open-menu') || (throughGate && id === '#cardapio') ? 3200 : undefined);
   }));
 
   function lockScroll(on) {
@@ -140,6 +155,72 @@
     });
   }, { rootMargin: '-45% 0px -50% 0px' });
   ['inicio', 'novidades', 'cardapio', 'galeria', 'visite'].forEach((id) => { const s = document.getElementById(id); if (s) navIO.observe(s); });
+
+  // ---------- hero: onde ficam o logo (chave), o botão e a fechadura ----------
+  const stage = $('.gate__stage');
+  const offsetIn = (el, anc) => { let x = 0, y = 0, n = el; while (n && n !== anc) { x += n.offsetLeft; y += n.offsetTop; n = n.offsetParent; } return n === anc ? [x, y] : null; };
+  const px = (v) => Math.round(v) + 'px';
+  function heroLayout() {
+    const W = stage.clientWidth, H = stage.clientHeight; if (!W || !H) return;
+    const btn = $('.keycta__btn'), ctaH = (btn && btn.offsetHeight) || 56, gap = 22;
+    let x, y, h;
+    if (W / H >= 1 && W >= 760) { // paisagem: logo à direita do título, botão logo abaixo
+      h = Math.min(H * 0.44, W * 0.25); x = W * 0.74;
+      const top = hdrH() + (H - hdrH() - (h + gap + ctaH)) / 2; y = top + h / 2;
+    } else { // retrato: logo entre o título e a busca, botão logo abaixo do logo
+      const head = $('.hero__head'), srch = $('.hsearch'), a = offsetIn(head, stage), b = offsetIn(srch, stage);
+      const top = (a ? a[1] + head.offsetHeight : H * 0.3) + 16, bottom = (b ? b[1] : H * 0.8) - 14;
+      h = Math.max(92, Math.min(H * 0.27, bottom - top - gap - ctaH - 16)); x = W / 2;
+      y = top + (bottom - top - (h + gap + ctaH)) / 2 + h / 2;
+    }
+    const st = stage.style;
+    st.setProperty('--key-x', px(x)); st.setProperty('--key-y', px(y)); st.setProperty('--key-h', px(h));
+    // fechadura: no meio das duas folhas da porta (medido sem as transformações da animação)
+    const lock = $('.door--r .door__lock'), set = $('.doorset'), at = lock && offsetIn(lock, stage);
+    if (at && lock.offsetWidth) {
+      const d = lock.offsetWidth, lx = at[0] + d / 2, ly = at[1] + d / 2;
+      st.setProperty('--lock-x', px(lx)); st.setProperty('--lock-y', px(ly)); st.setProperty('--lock-k', px(Math.min(H * 0.17, d * 1.9)));
+      const o = offsetIn(lock, set);
+      if (o && hasGSAP) gsap.set(set, { transformOrigin: `${Math.round(o[0] + d / 2)}px ${Math.round(o[1] + d / 2)}px` });
+    }
+    window.dispatchEvent(new Event('btk-layout'));
+  }
+  heroLayout();
+  let layoutT; addEventListener('resize', () => { clearTimeout(layoutT); layoutT = setTimeout(heroLayout, 120); });
+  if (document.fonts) document.fonts.ready.then(heroLayout);
+  window.BTK_LAYOUT = heroLayout;
+
+  // ---------- vídeo do hero: carrega depois da página; nada com economia de dados ou "menos movimento" ----------
+  const heroVid = $('#heroVideo'), conn = navigator.connection || {};
+  const vidOK = !!heroVid && !reduced && !conn.saveData && !/2g/.test(conn.effectiveType || '');
+  let vidKind = '', vidVisible = true, vidCovered = false;
+  function syncVideo() {
+    if (!vidKind) return;
+    if (vidVisible && !vidCovered && !document.hidden) { const pr = heroVid.play(); if (pr && pr.catch) pr.catch(() => {}); } else heroVid.pause();
+  }
+  function pickVideo() {
+    if (!vidOK) return;
+    const k = innerWidth / innerHeight >= 1 ? 'd' : 'm'; if (k === vidKind) return;
+    vidKind = k; heroVid.classList.remove('is-on');
+    // AV1 (Chrome, Firefox, Android) → HEVC (iPhone, Safari) → H.264 (qualquer navegador)
+    heroVid.innerHTML = `<source src="vid/hero-${k}.av1.mp4" type='video/mp4; codecs="av01.0.08M.08"'><source src="vid/hero-${k}.hevc.mp4" type='video/mp4; codecs="hvc1.1.6.L120.90"'><source src="vid/hero-${k}.mp4" type="video/mp4">`;
+    heroVid.load(); syncVideo();
+  }
+  if (heroVid) {
+    heroVid.muted = true;
+    heroVid.addEventListener('playing', () => heroVid.classList.add('is-on'));
+    const startVid = () => setTimeout(pickVideo, 250);
+    if (document.readyState === 'complete') startVid(); else addEventListener('load', startVid, { once: true });
+    addEventListener('resize', () => { if (vidKind) pickVideo(); });
+    new IntersectionObserver(([en]) => { vidVisible = en.isIntersecting; syncVideo(); }).observe(stage);
+    document.addEventListener('visibilitychange', syncVideo);
+  }
+  // topo com texto claro enquanto está sobre o vídeo/porta
+  const setOnHero = (on) => root.classList.toggle('on-hero', on);
+  if (!gateOn) { const f = () => setOnHero(scrollY < stage.offsetHeight - hdrH()); addEventListener('scroll', f, { passive: true }); f(); }
+  else setOnHero(scrollY < 40);
+  const keyBtn = $('.keycta__btn');
+  if (keyBtn) keyBtn.addEventListener('click', () => { keyBtn.classList.add('turn'); setTimeout(() => keyBtn.classList.remove('turn'), 1800); });
 
   // ---------- busca do topo: exemplos digitando ----------
   const typedEl = $('#typed');
@@ -268,6 +349,8 @@
     const vis = $('.tab:not([hidden])', tabsEl); if (vis) setActiveTab(vis.dataset.cat);
   }
   listEl.addEventListener('click', (e) => {
+    const tg = e.target.closest('.tag[data-tag]');
+    if (tg) { e.preventDefault(); openTagSearch(tg.dataset.tag, tg); return; }
     const b = e.target.closest('.item'); if (!b) return;
     openItem(b.dataset.id, b);
   });
@@ -316,7 +399,7 @@
   function popLayer(name) { if (layers[layers.length - 1] === name) history.back(); }
   addEventListener('popstate', () => {
     const top = layers.pop();
-    if (top === 'search') closeSearchUI(); else if (top === 'sheet') closeSheetUI();
+    if (top === 'search') closeSearchUI(); else if (top === 'sheet') closeSheetUI(); else if (top === 'lb') closeLightboxUI();
   });
 
   // =========================================================
@@ -344,17 +427,30 @@
   }
   $('#clearRecent').addEventListener('click', () => { store.set('btk-recent', []); renderRecent(); });
 
-  function openSearch(q) {
-    if (!searchEl.hidden) { if (q != null) { qEl.value = q; runSearch(); } return; }
-    searchEl.hidden = false; lockScroll(true); renderRecent(); pushLayer('search');
+  function openSearch(q, opt = {}) {
+    if (!searchEl.hidden) { if (q != null) { qEl.value = q; disabled = new Set(); runSearch(); } return; }
+    searchEl.hidden = false; lockScroll(true); renderRecent();
+    if (!opt.replaceTop) pushLayer('search');
     qEl.value = q || ''; disabled = new Set(); runSearch();
+    if (q) $('#searchBody').scrollTop = 0;
     if (hasGSAP && !reduced) {
       const desk = innerWidth >= 760;
       gsap.fromTo('.search__backdrop', { opacity: 0 }, { opacity: 1, duration: 0.35 });
       gsap.fromTo('.search__panel', desk ? { opacity: 0, y: -18 } : { yPercent: 100 }, desk ? { opacity: 1, y: 0, duration: 0.5, ease: 'expo.out', clearProps: 'opacity' } : { yPercent: 0, duration: 0.55, ease: 'expo.out' });
       gsap.fromTo('.search__empty > *', { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.5, stagger: 0.04, delay: 0.1, ease: 'power3.out' });
     }
-    setTimeout(() => qEl.focus({ preventScroll: true }), 60);
+    if (!opt.noFocus) setTimeout(() => qEl.focus({ preventScroll: true }), 60);
+  }
+  // tocar numa tag (vegano, picante…) abre a busca com todos os itens daquela tag
+  function openTagSearch(tag, fromEl) {
+    const q = TAG_Q[tag] || String(tag).toLowerCase();
+    if (fromEl) { const [x, y] = center(fromEl); FX.burst(x, y, 3, 0.7); }
+    if (!sheet.hidden) { // troca a ficha pela busca sem empilhar outra entrada no histórico
+      hideSheet(true);
+      layers[layers.length - 1] = 'search';
+      history.replaceState({ layer: 'search' }, '', location.pathname + location.search);
+      openSearch(q, { noFocus: true, replaceTop: true });
+    } else openSearch(q, { noFocus: true });
   }
   function closeSearchUI() {
     if (searchEl.hidden) return;
@@ -370,6 +466,10 @@
   addEventListener('keydown', (e) => {
     const typing = /INPUT|TEXTAREA/.test(document.activeElement.tagName);
     if ((e.key === '/' && !typing) || ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k')) { e.preventDefault(); openSearch(); }
+    if (!$('#lightbox').hidden) {
+      if (e.key === 'Escape') popLayer('lb'); else if (e.key === 'ArrowRight') lbGo(1); else if (e.key === 'ArrowLeft') lbGo(-1);
+      return;
+    }
     if (e.key === 'Escape') { if (!$('#sheet').hidden) popLayer('sheet'); else if (!searchEl.hidden) popLayer('search'); }
   });
   let qT;
@@ -466,13 +566,18 @@
     $('#sheetCrumb').textContent = catName(cat) + (sec.n !== cat.n ? ' · ' + sec.n : '');
     $('#sheetName').textContent = it.n;
     $('#sheetDesc').textContent = it.d || '';
-    $('#sheetTags').innerHTML = (it.t || []).map(tagHTML).join('');
+    $('#sheetTags').innerHTML = (it.t || []).map(tagBtnHTML).join('');
     let opts = '';
-    if (it.s && (it.s.length > 1 || it.s[0].l)) opts += `<div class="opt"><h4>${cat.id === 'vinhos' ? 'Garrafa' : 'Tamanhos'}</h4><ul>${it.s.map((s) => `<li><span>${esc(s.l || 'Padrão')}${s.o ? `<small>${esc(s.o)}</small>` : ''}</span><b>${fmt(s.p)}</b></li>`).join('')}</ul></div>`;
-    (it.x || []).forEach((g) => { if (g.c.length) opts += `<div class="opt"><h4>${esc(g.g || 'Opções')}</h4><ul>${g.c.map((c) => `<li><span>${esc(c.l)}</span><b>${c.p ? fmt(c.p) : ''}</b></li>`).join('')}</ul></div>`; });
+    const sizeTitle = cat.id === 'vinhos' ? 'Garrafa' : it.s && it.s.every((s) => /\d\s*ml\b/i.test(s.l)) ? 'Tamanhos' : 'Opções';
+    if (it.s && (it.s.length > 1 || it.s[0].l)) opts += `<div class="opt opt--grid"><h4>${sizeTitle}</h4><ul>${it.s.map((s) => `<li><span>${esc(s.l || 'Padrão')}${s.o ? `<small>${esc(s.o)}</small>` : ''}</span><b>${fmt(s.p)}</b></li>`).join('')}</ul></div>`;
+    (it.x || []).forEach((g) => {
+      if (!g.c.length) return;
+      if (!g.c.some((c) => c.p)) { opts += `<p class="opt-txt"><strong>${esc(g.g || 'Detalhes')}:</strong> ${esc(g.c.map((c) => c.l).join('; '))}</p>`; return; } // ingredientes, sem preço
+      opts += `<div class="opt opt--chips"><h4>${esc(g.g || 'Opções')}</h4><ul>${g.c.map((c) => `<li><span>${esc(c.l)}</span><b>${c.p ? fmt(c.p) : ''}</b></li>`).join('')}</ul></div>`;
+    });
     $('#sheetOpts').innerHTML = opts;
-    const multi = it.s && it.s.length > 1;
-    $('#sheetPrice').innerHTML = it.p ? `<small>${multi ? 'a partir de' : 'preço'}</small>${fmt(multi ? minSize(it) : it.s && it.s.length === 1 ? it.s[0].p : it.p)}` : '<small>preço</small>consulte';
+    const pi = priceInfo(it);
+    $('#sheetPrice').innerHTML = pi ? `<small>${pi.from ? 'a partir de' : 'preço'}</small>${fmt(pi.v)}` : '<small>preço</small>consulte';
     sMedia.classList.toggle('is-tall', !!isTall(it));
     if (it.i) { sMedia.classList.remove('empty'); sImg.src = it.i; sImg.alt = it.n; }
     else { sMedia.classList.add('empty'); sImg.removeAttribute('src'); sImg.alt = ''; }
@@ -516,9 +621,10 @@
       gsap.fromTo([sImg, ...$$('#sheetContent > *')], { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.5, stagger: 0.035, ease: 'power3.out', clearProps: 'transform,opacity' });
     } });
   }
-  function closeSheetUI() {
+  function closeSheetUI() { hideSheet(false); }
+  function hideSheet(keepLock) {
     if (sheet.hidden) return;
-    const done = () => { sheet.hidden = true; lockScroll(false); if (hasGSAP) gsap.set(panel, { clearProps: 'all' }); currentId = null; };
+    const done = () => { sheet.hidden = true; if (!keepLock) lockScroll(false); if (hasGSAP) gsap.set(panel, { clearProps: 'all' }); currentId = null; };
     if (!hasGSAP || reduced) return done();
     const desk = innerWidth >= 760;
     gsap.to('.sheet__backdrop', { opacity: 0, duration: 0.3 });
@@ -526,6 +632,7 @@
   }
   $$('[data-close-sheet]').forEach((b) => b.addEventListener('click', () => popLayer('sheet')));
   $('#pairList').addEventListener('click', (e) => { const b = e.target.closest('.pair__item'); if (b) swapItem(b.dataset.id, b); });
+  $('#sheetTags').addEventListener('click', (e) => { const b = e.target.closest('[data-tag]'); if (b) openTagSearch(b.dataset.tag, b); });
   $('#shareItem').addEventListener('click', async () => {
     const rec = BY_ID.get(currentId); if (!rec) return;
     const url = location.origin + location.pathname + '#item-' + currentId;
@@ -558,7 +665,9 @@
   }
 
   // =========================================================
-  // GALERIA — carrossel automático, infinito e arrastável
+  // GALERIA — carrossel automático, infinito e arrastável.
+  // Mostra as fotos do Café Bienal. Quando o Botanikafé conectar o Instagram
+  // (api/reels.js + IG_TOKEN na Vercel), passa a mostrar os últimos reels sozinha.
   // =========================================================
   const GAL = [
     ['bowl-aurora', 'Bowl Aurora'], ['people', 'Encontros no parque'], ['salmao-sour', 'Salmão Sour'], ['mesa-brunch', 'Mesa de brunch'],
@@ -567,60 +676,191 @@
     ['torta-maca', 'Sobremesa'], ['smoohtie-nuvem', 'Smoothie Nuvem'], ['brunch', 'Brunch para dividir'], ['ambiente-externo', 'Varanda verde'],
   ];
   const WIDE = new Set(['bowl-aurora', 'salmao-sour', 'smoothie-verao', 'cogumelo-toast', 'lunch-time']);
+  let GITEMS = GAL.map(([f, c]) => ({ type: 'photo', f, c }));
   const loopEl = $('#loop'), loopTrack = $('#loopTrack');
-  const shotHTML = ([f, c]) => `<figure class="shot"><div class="shot__img"><img src="img/b/${f}-sm.webp" srcset="img/b/${f}-sm.webp ${WIDE.has(f) ? 640 : 427}w, img/b/${f}.webp ${WIDE.has(f) ? 1080 : 934}w" sizes="(min-width:760px) 360px, 75vw" alt="${esc(c)}" loading="lazy" decoding="async" draggable="false"></div><figcaption>${esc(c)}</figcaption></figure>`;
-  loopTrack.innerHTML = GAL.map(shotHTML).join('') + GAL.map(shotHTML).join('');
-  $$('.shot', loopTrack).slice(GAL.length).forEach((f) => f.setAttribute('aria-hidden', 'true'));
-  (function loop() {
-    const shots = $$('.shot', loopTrack);
-    let x = 0, v = 0, setW = 0, dragging = false, lastX = 0, lastT = 0, moved = 0, resumeAt = 0, hover = false, visible = false, raf = 0, prev = 0;
+  function shotHTML(g, i, dup) {
+    const hide = dup ? ' aria-hidden="true"' : '', tab = dup ? ' tabindex="-1"' : '';
+    if (g.type === 'reel') {
+      return `<figure class="shot shot--reel"${hide}><button class="shot__img" type="button" data-i="${i}"${tab} aria-label="Assistir reel${g.c ? ': ' + esc(g.c) : ''}">${g.poster ? `<img src="${esc(g.poster)}" alt="" loading="lazy" decoding="async" draggable="false">` : ''}<span class="shot__badge"><svg aria-hidden="true"><use href="#i-insta"/></svg>Reel</span><span class="shot__play" aria-hidden="true"><svg><use href="#i-play"/></svg></span></button><figcaption>${esc(g.c || 'Reel do @botanikafe')}</figcaption></figure>`;
+    }
+    const f = g.f, w = WIDE.has(f);
+    return `<figure class="shot"${hide}><button class="shot__img" type="button" data-i="${i}"${tab} aria-label="Ampliar foto: ${esc(g.c)}"><img src="img/b/${f}-sm.webp" srcset="img/b/${f}-sm.webp ${w ? 640 : 427}w, img/b/${f}.webp ${w ? 1080 : 934}w" sizes="(min-width:760px) 360px, 75vw" alt="${esc(g.c)}" loading="lazy" decoding="async" draggable="false"></button><figcaption>${esc(g.c)}</figcaption></figure>`;
+  }
+  // o loop precisa de um "conjunto" mais largo que a tela: com poucos reels, ele se repete
+  let setLen = 0;
+  function fillTrack() {
+    const n = GITEMS.length, cardW = (innerWidth >= 760 ? 300 : innerWidth * 0.64) + 14;
+    const reps = Math.max(1, Math.ceil((innerWidth + cardW) / (n * cardW)));
+    const set = []; for (let r = 0; r < reps; r++) GITEMS.forEach((g, i) => set.push([g, i]));
+    setLen = set.length;
+    loopTrack.innerHTML = set.map(([g, i], k) => shotHTML(g, i, k >= n)).join('') + set.map(([g, i]) => shotHTML(g, i, true)).join('');
+  }
+  fillTrack();
+  const loopAPI = (function loop() {
+    let shots = [], imgs = [];
+    let x = 0, v = 0, setW = 0, pressed = false, dragging = false, startX = 0, lastX = 0, lastT = 0, moved = 0, pid = null;
+    let resumeAt = 0, hover = false, visible = false, paused = false, raf = 0, prev = 0;
     const SPEED = innerWidth < 760 ? 34 : 46; // px/s
-    const imgs = shots.map((s) => s.querySelector('img'));
     let step = 0, cardW = 0, baseLeft = 0;
     const measure = () => {
-      const a = shots[0], b = shots[1], c = shots[GAL.length];
+      const a = shots[0], b = shots[1], c = shots[setLen]; if (!a || !b || !c) return;
       setW = c.offsetLeft - a.offsetLeft; step = b.offsetLeft - a.offsetLeft; cardW = a.offsetWidth;
       baseLeft = loopEl.getBoundingClientRect().left + a.offsetLeft;
     };
-    measure(); addEventListener('resize', measure);
+    const collect = () => { shots = $$('.shot', loopTrack); imgs = shots.map((sh) => sh.querySelector('img')); measure(); };
+    collect(); addEventListener('resize', measure);
     if (document.fonts) document.fonts.ready.then(measure);
     function frame(t) {
       raf = requestAnimationFrame(frame);
       const dt = Math.min(0.05, (t - (prev || t)) / 1000); prev = t;
       if (!dragging) {
-        const auto = reduced || t < resumeAt ? 0 : (hover ? 0.25 : 1) * SPEED;
-        v += (-auto - v) * Math.min(1, dt * 2.2); // ritmo volta suave depois de soltar
+        const auto = reduced || pressed || t < resumeAt ? 0 : (hover ? 0.25 : 1) * SPEED;
+        v += (-auto - v) * Math.min(1, dt * (pressed ? 8 : 2.2)); // segurar com o dedo freia; ao soltar o ritmo volta suave
         x += v * dt;
       }
       if (setW) { while (x <= -setW) x += setW; while (x > 0) x -= setW; }
       loopTrack.style.transform = `translate3d(${x.toFixed(2)}px,0,0)`;
       const vw = innerWidth;
       for (let i = 0; i < imgs.length; i++) { // parallax calculado, sem medir o layout a cada quadro
+        if (!imgs[i]) continue;
         const cx = baseLeft + x + i * step + cardW / 2;
         if (cx < -cardW || cx > vw + cardW) continue;
         imgs[i].style.setProperty('--px', (-8 - ((cx - vw / 2) / vw) * 7).toFixed(2) + '%');
       }
     }
-    const start = () => { if (!raf) { prev = 0; raf = requestAnimationFrame(frame); } };
+    const start = () => { if (!raf && visible && !paused && !document.hidden) { prev = 0; raf = requestAnimationFrame(frame); } };
     const stop = () => { cancelAnimationFrame(raf); raf = 0; };
-    new IntersectionObserver(([en]) => { visible = en.isIntersecting; visible && !document.hidden ? start() : stop(); }).observe(loopEl);
-    document.addEventListener('visibilitychange', () => (document.hidden ? stop() : visible && start()));
+    new IntersectionObserver(([en]) => { visible = en.isIntersecting; visible ? start() : stop(); }).observe(loopEl);
+    document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
+    addEventListener('btk-pause', () => { paused = true; stop(); });
+    addEventListener('btk-resume', () => { paused = false; start(); });
+    // arrastar só "pega" o carrossel depois de alguns pixels: um toque simples continua sendo clique na foto
     loopEl.addEventListener('pointerdown', (e) => {
-      dragging = true; moved = 0; lastX = e.clientX; lastT = performance.now(); v = 0;
-      loopEl.classList.add('dragging'); try { loopEl.setPointerCapture(e.pointerId); } catch (err) { /* ok */ }
+      if (e.button > 0) return;
+      pressed = true; dragging = false; moved = 0; startX = lastX = e.clientX; lastT = performance.now(); pid = e.pointerId;
     });
     loopEl.addEventListener('pointermove', (e) => {
-      if (!dragging) return;
+      if (!pressed) return;
       const now = performance.now(), dx = e.clientX - lastX;
+      if (!dragging) {
+        if (Math.abs(e.clientX - startX) < 6) return;
+        dragging = true; v = 0; loopEl.classList.add('dragging');
+        try { loopEl.setPointerCapture(pid); } catch (err) { /* ok */ }
+      }
       x += dx; moved += Math.abs(dx);
       v = 0.8 * (dx / Math.max(1, now - lastT)) * 1000 + 0.2 * v;
       lastX = e.clientX; lastT = now;
     });
-    const end = () => { if (!dragging) return; dragging = false; loopEl.classList.remove('dragging'); resumeAt = performance.now() + 1400; };
+    const end = () => {
+      if (!pressed) return; pressed = false;
+      if (dragging) { dragging = false; loopEl.classList.remove('dragging'); resumeAt = performance.now() + 1400; }
+    };
     loopEl.addEventListener('pointerup', end); loopEl.addEventListener('pointercancel', end); loopEl.addEventListener('lostpointercapture', end);
-    loopEl.addEventListener('click', (e) => { if (moved > 6) { e.preventDefault(); e.stopPropagation(); } }, true);
+    loopEl.addEventListener('click', (e) => { if (moved > 6) { e.preventDefault(); e.stopPropagation(); moved = 0; } }, true);
     loopEl.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') hover = true; });
     loopEl.addEventListener('pointerleave', () => { hover = false; });
+    return { rebuild() { x = 0; collect(); } };
+  })();
+  loopTrack.addEventListener('click', (e) => { const b = e.target.closest('.shot__img'); if (b) openLightbox(+b.dataset.i, b); });
+
+  // últimos reels do Instagram (só aparecem se a conta do café estiver conectada na Vercel)
+  const httpsURL = (u, re) => (typeof u === 'string' && (re || /^https:\/\//).test(u) ? u : '');
+  function loadReels() {
+    if (!/^https?:$/.test(location.protocol) || !window.fetch) return;
+    const ctrl = window.AbortController ? new AbortController() : null;
+    const t = setTimeout(() => ctrl && ctrl.abort(), 5000);
+    fetch('api/reels', ctrl ? { signal: ctrl.signal } : {}).then((r) => (r.ok ? r.json() : null)).then((j) => {
+      clearTimeout(t);
+      const list = (j && Array.isArray(j.reels) ? j.reels : []).map((r) => ({
+        type: 'reel', video: httpsURL(r && r.video), poster: httpsURL(r && r.poster), c: String((r && r.caption) || '').slice(0, 90),
+        url: httpsURL(r && r.url, /^https:\/\/(www\.)?instagram\.com\//) || 'https://www.instagram.com/botanikafe/',
+      })).filter((r) => r.video).slice(0, 6);
+      if (list.length < 3 || !$('#lightbox').hidden) return;
+      GITEMS = list; fillTrack(); loopAPI.rebuild();
+      $('#galeria').classList.add('gallery--reels'); $('#galSub').hidden = false;
+    }).catch(() => clearTimeout(t));
+  }
+  if (document.readyState === 'complete') setTimeout(loadReels, 1500); else addEventListener('load', () => setTimeout(loadReels, 1500), { once: true });
+
+  // ---------- foto (ou reel) ampliado ----------
+  const lb = $('#lightbox'), lbImg = $('#lbImg'), lbVid = $('#lbVid'), lbIg = $('#lbIg'), lbCap = $('#lbCap'), lbCount = $('#lbCount');
+  let lbIdx = 0, lbBusy = false;
+  const lbCur = () => (lbVid.hidden ? lbImg : lbVid);
+  function lbFill(i) {
+    const n = GITEMS.length; lbIdx = (i + n) % n;
+    const g = GITEMS[lbIdx];
+    lbCap.textContent = g.c || 'Reel do @botanikafe'; lbCount.textContent = `${lbIdx + 1} / ${n}`;
+    if (g.type === 'reel') {
+      lbImg.hidden = true; lbImg.removeAttribute('src');
+      lbVid.hidden = false; lbVid.poster = g.poster || ''; lbVid.src = g.video; lbVid.muted = false;
+      const pr = lbVid.play(); // o toque no card permite som; se o navegador recusar, toca sem som
+      if (pr && pr.catch) pr.catch(() => { lbVid.muted = true; lbVid.play().catch(() => {}); });
+      lbIg.hidden = false; lbIg.href = g.url;
+      return;
+    }
+    lbVid.pause(); lbVid.hidden = true; lbVid.removeAttribute('src'); lbIg.hidden = true;
+    lbImg.hidden = false; lbImg.width = WIDE.has(g.f) ? 1080 : 934; lbImg.height = WIDE.has(g.f) ? 720 : 1400;
+    lbImg.src = `img/b/${g.f}.webp`; lbImg.alt = g.c;
+    [lbIdx + 1, lbIdx - 1].forEach((k) => { const o = GITEMS[(k + n) % n]; if (o.type === 'photo') { const im = new Image(); im.src = `img/b/${o.f}.webp`; } });
+  }
+  function lbGo(dir) {
+    if (lbBusy) return;
+    if (!hasGSAP || reduced) { lbFill(lbIdx + dir); return; }
+    lbBusy = true;
+    gsap.to(lbCur(), { x: -dir * 70, opacity: 0, duration: 0.16, ease: 'power2.in', onComplete: () => {
+      gsap.set([lbImg, lbVid], { clearProps: 'transform,opacity' });
+      lbFill(lbIdx + dir);
+      const el = lbCur();
+      const show = () => { lbBusy = false; gsap.fromTo(el, { x: dir * 70, opacity: 0 }, { x: 0, opacity: 1, duration: 0.5, ease: 'expo.out' }); };
+      el === lbImg && lbImg.decode ? lbImg.decode().then(show, show) : show();
+    } });
+  }
+  function openLightbox(i, fromEl) {
+    lbFill(i);
+    lb.hidden = false; lockScroll(true); pushLayer('lb');
+    if (!hasGSAP || reduced) return;
+    const el = lbCur(), from = { opacity: 0, scale: 0.85, x: 0, y: 24 };
+    if (fromEl) { // a foto sai do card da galeria
+      const r = fromEl.getBoundingClientRect(), f = el.getBoundingClientRect();
+      if (f.width) Object.assign(from, { opacity: 0.4, x: r.left + r.width / 2 - (f.left + f.width / 2), y: r.top + r.height / 2 - (f.top + f.height / 2), scale: Math.max(0.2, r.width / f.width) });
+    }
+    gsap.fromTo('.lb__backdrop', { opacity: 0 }, { opacity: 1, duration: 0.4 });
+    gsap.fromTo(el, from, { opacity: 1, x: 0, y: 0, scale: 1, duration: 0.7, ease: 'expo.out' });
+    gsap.fromTo('.lb__ui > *', { opacity: 0 }, { opacity: 1, duration: 0.4, delay: 0.2, stagger: 0.04 });
+  }
+  function closeLightboxUI() {
+    if (lb.hidden) return;
+    lbVid.pause();
+    const done = () => { lb.hidden = true; lbBusy = false; lbVid.removeAttribute('src'); lockScroll(false); if (hasGSAP) gsap.set([lbImg, lbVid, '.lb__backdrop', '.lb__ui > *'], { clearProps: 'all' }); };
+    if (!hasGSAP || reduced) return done();
+    gsap.to('.lb__backdrop, .lb__ui > *', { opacity: 0, duration: 0.3 });
+    gsap.to(lbCur(), { opacity: 0, scale: 0.92, y: 16, duration: 0.3, ease: 'power2.in', onComplete: done });
+  }
+  $('#lbPrev').addEventListener('click', () => lbGo(-1));
+  $('#lbNext').addEventListener('click', () => lbGo(1));
+  (function lbGestures() { // arrastar para os lados troca; para baixo fecha; tocar no reel pausa/continua
+    let p0 = null, swiped = false;
+    lb.addEventListener('pointerdown', (e) => { if (e.target.closest('.lb__btn, .lb__ig')) return; p0 = { x: e.clientX, y: e.clientY }; swiped = false; });
+    lb.addEventListener('pointermove', (e) => {
+      if (!p0 || lbBusy) return;
+      const dx = e.clientX - p0.x, dy = e.clientY - p0.y;
+      if (Math.abs(dx) > 10 || dy > 10) swiped = true;
+      if (swiped && hasGSAP && !reduced) gsap.set(lbCur(), Math.abs(dx) > Math.abs(dy) ? { x: dx * 0.9, y: 0, opacity: 1 - Math.min(0.5, Math.abs(dx) / 600) } : { y: Math.max(0, dy), x: 0, opacity: 1 - Math.min(0.6, Math.max(0, dy) / 400) });
+    });
+    const up = (e) => {
+      if (!p0) return;
+      const dx = e.clientX - p0.x, dy = e.clientY - p0.y; p0 = null;
+      if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) lbGo(dx < 0 ? 1 : -1);
+      else if (dy > 90 && dy > Math.abs(dx)) popLayer('lb');
+      else if (hasGSAP && !reduced && swiped) gsap.to(lbCur(), { x: 0, y: 0, opacity: 1, duration: 0.35, ease: 'power3.out' });
+    };
+    lb.addEventListener('pointerup', up); lb.addEventListener('pointercancel', up);
+    lb.addEventListener('click', (e) => {
+      if (swiped) { swiped = false; return; }
+      if (e.target === lbVid) { if (lbVid.paused) lbVid.play().catch(() => {}); else lbVid.pause(); return; }
+      if (e.target === lbImg || e.target.closest('.lb__btn:not([data-close-lb]), .lb__ig')) return;
+      if (e.target.closest('[data-close-lb]')) popLayer('lb');
+    });
   })();
 
   // =========================================================
@@ -661,7 +901,7 @@
     tl.from('.hero__title .w', { yPercent: 115, rotate: 7, duration: 1.3, stagger: 0.07 })
       .from('.hero__sub', { opacity: 0, y: 20, duration: 1 }, 0.35)
       .from('.hsearch', { opacity: 0, y: 26, duration: 1.1 }, 0.45)
-      .from('.hero__cta', { opacity: 0, y: 14, duration: 1 }, 0.6)
+      .from('.keycta__btn', { opacity: 0, y: 16, scale: 0.94, duration: 1.1 }, 0.55)
       .from('.hdr', { opacity: 0, duration: 0.9 }, 0.2)
       .add(() => dock.classList.remove('pre'), 0.6);
     window.dispatchEvent(new Event('btk-hero-in'));
@@ -672,31 +912,49 @@
     const W = (sel) => $$(sel);
     const gate = gsap.timeline({ paused: true, defaults: { ease: 'none', immediateRender: false } });
     gate
+      // o texto e o botão saem
       .fromTo(W('.hero__title .w'), { yPercent: 0, opacity: 1 }, { yPercent: -120, opacity: 0, stagger: 0.012, duration: 0.14, ease: 'power2.in' }, 0.02)
-      .fromTo(W('.hero__sub, .hsearch, .hero__cta'), { y: 0, autoAlpha: 1 }, { y: 26, autoAlpha: 0, stagger: 0.02, duration: 0.12, ease: 'power2.in' }, 0)
+      .fromTo(W('.hero__sub, .hsearch'), { y: 0, autoAlpha: 1 }, { y: 26, autoAlpha: 0, stagger: 0.02, duration: 0.12, ease: 'power2.in' }, 0)
+      .fromTo('.keycta', { y: 0, autoAlpha: 1 }, { y: 16, autoAlpha: 0, duration: 0.08, ease: 'power2.in' }, 0)
       .fromTo('.brand__logo', { opacity: 1 }, { opacity: 0, duration: 0.05 }, 0.1)
-      .fromTo('.gate__glow', { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.16, ease: 'power2.out' }, 0.22)
-      .fromTo('.door__seam', { scaleY: 0, opacity: 1 }, { scaleY: 1, duration: 0.12, ease: 'power2.out' }, 0.3)
-      .fromTo('.gate__pulse', { scale: 0.35, opacity: 0 }, { scale: 0.5, opacity: 0.9, duration: 0.02 }, 0.48)
-      .to('.gate__pulse', { scale: 2.3, opacity: 0, duration: 0.1, ease: 'power2.out' }, 0.5)
-      .fromTo('.door--l', { rotateY: 0 }, { rotateY: 96, duration: 0.34, ease: 'power2.in' }, 0.54)
-      .fromTo('.door--r', { rotateY: 0 }, { rotateY: -96, duration: 0.34, ease: 'power2.in' }, 0.54)
-      .fromTo('.door', { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.07 }, 0.83)
-      .fromTo('.door__shade', { opacity: 0 }, { opacity: 1, duration: 0.3 }, 0.54)
-      .to('.door__seam', { opacity: 0, duration: 0.05 }, 0.55)
-      .to('.gate__glow', { opacity: 0, duration: 0.12 }, 0.72)
+      // a câmera chega na entrada: o vídeo escurece e a porta aparece
+      .fromTo('.hero__media', { scale: 1 }, { scale: 1.14, duration: 0.28, ease: 'power1.in' }, 0)
+      .fromTo('.hero__dim', { opacity: 0 }, { opacity: 0.92, duration: 0.16, ease: 'power1.in' }, 0.04)
+      .fromTo('.doorscene', { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.14, ease: 'power1.inOut' }, 0.1)
+      .fromTo('.doorset', { scale: 1.22 }, { scale: 1, duration: 0.2, ease: 'power2.out' }, 0.08)
+      .fromTo('.hero__media', { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.01 }, 0.3)
+      // a chave encaixa e gira: a fechadura brilha
+      .fromTo('.gate__glow', { opacity: 0, scale: 0.6 }, { opacity: 0.9, scale: 1, duration: 0.16, ease: 'power2.out' }, 0.3)
+      .fromTo('.doorway__seam', { scaleY: 0, opacity: 1 }, { scaleY: 1, duration: 0.1, ease: 'power2.out' }, 0.44)
+      .fromTo('.gate__pulse', { scale: 0.35, opacity: 0 }, { scale: 0.5, opacity: 0.9, duration: 0.02 }, 0.5)
+      .to('.gate__pulse', { scale: 2.3, opacity: 0, duration: 0.1, ease: 'power2.out' }, 0.52)
+      // as folhas abrem para dentro e a câmera atravessa a porta
+      .fromTo('.door--l', { rotateY: 0 }, { rotateY: 84, duration: 0.32, ease: 'power2.inOut' }, 0.54)
+      .fromTo('.door--r', { rotateY: 0 }, { rotateY: -84, duration: 0.32, ease: 'power2.inOut' }, 0.54)
+      .fromTo('.door__shade', { opacity: 0 }, { opacity: 0.9, duration: 0.3 }, 0.54)
+      .to('.doorway__seam', { opacity: 0, duration: 0.05 }, 0.56)
+      .fromTo('.doorset', { scale: 1 }, { scale: 2.7, duration: 0.3, ease: 'power2.in' }, 0.6)
+      .to('.gate__glow', { opacity: 0, duration: 0.12 }, 0.7)
+      .fromTo('.doorscene', { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.08 }, 0.84)
       .fromTo('.brand__logo', { opacity: 0, scale: 1.45 }, { opacity: 1, scale: 1, duration: 0.06, ease: 'back.out(2)' }, 0.86)
       .fromTo('.hero__gl', { opacity: 1 }, { opacity: 0, duration: 0.1 }, 0.86)
       .to('.hero__fallback', { opacity: 0, duration: 0.08 }, 0.14)
       .to({}, { duration: 0.001 }, 0.999);
-    let burstDone = false;
+    // reage ao progresso da própria animação (no celular ela segue a rolagem com um leve atraso)
+    let burstDone = false, lastP = 0;
+    gate.eventCallback('onUpdate', () => {
+      const p = gate.progress(), down = p > lastP; lastP = p;
+      if (!burstDone && p > 0.56 && down) {
+        burstDone = true;
+        const lx = parseFloat(stage.style.getPropertyValue('--lock-x')) || innerWidth / 2, ly = parseFloat(stage.style.getPropertyValue('--lock-y')) || innerHeight * 0.5;
+        FX.burst(lx, ly, 9, 1.5);
+      }
+      if (p < 0.4) burstDone = false;
+      setOnHero(p < 0.8);
+      const cov = p > 0.3; if (cov !== vidCovered) { vidCovered = cov; syncVideo(); }
+    });
     ScrollTrigger.create({
       trigger: '.gate', start: 'top top', end: () => '+=' + Math.max(1, $('.gate').offsetHeight - $('.gate__stage').offsetHeight), scrub: lenis ? true : 0.35, animation: gate, invalidateOnRefresh: true,
-      onUpdate: (st) => {
-        const p = gate.progress();
-        if (!burstDone && p > 0.56 && st.direction > 0) { burstDone = true; FX.burst(innerWidth / 2, innerHeight * 0.48, 9, 1.5); }
-        if (p < 0.4) burstDone = false;
-      },
     });
     window.BTK_GATE = () => gate.progress();
   }

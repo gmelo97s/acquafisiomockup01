@@ -42,10 +42,12 @@ function init() {
   scene.add(new THREE.HemisphereLight(0xfff8e6, 0x3a3a10, 0.25));
   scene.fog = new THREE.Fog(0xf5f0d6, 12, 30);
 
+  // a chave é de latão nos dois temas (o hero fica sobre o vídeo); ao pousar no topo ela assume a cor do logo do tema
   const THEMES = {
-    light: { fog: 0xf5f0d6, logo: 0x6f6606, metal: 0.2, rough: 0.38, env: 0.55, leafA: 0x7a7108, leafB: 0x44521a, leafC: 0xd9b95a, bean: 0x2b1d14, exposure: 0.92 },
-    dark: { fog: 0x0b1720, logo: 0xc9a43e, metal: 0.8, rough: 0.34, env: 0.6, leafA: 0xa99c1c, leafB: 0x3f6a2e, leafC: 0xe0c46b, bean: 0x7a5534, exposure: 1.1 },
+    light: { fog: 0x14170f, logo: 0xc9a43e, metal: 0.82, rough: 0.32, env: 0.65, leafA: 0xa99c1c, leafB: 0x4f7a34, leafC: 0xe0c46b, bean: 0x7a5534, exposure: 1.12, head: 0x817708 },
+    dark: { fog: 0x0b1720, logo: 0xc9a43e, metal: 0.82, rough: 0.32, env: 0.65, leafA: 0xa99c1c, leafB: 0x3f6a2e, leafC: 0xe0c46b, bean: 0x7a5534, exposure: 1.12, head: 0xa99c1c },
   };
+  const brass = new THREE.Color(), headCol = new THREE.Color();
 
   // ---------- logo extrudado (altura = 1 unidade) ----------
   const d = document.querySelector('#logo path').getAttribute('d');
@@ -102,6 +104,7 @@ function init() {
   function setTheme(name) {
     const t = THEMES[name] || THEMES.light;
     scene.fog.color.setHex(t.fog);
+    brass.setHex(t.logo); headCol.setHex(t.head);
     logoMat.color.setHex(t.logo); logoMat.metalness = t.metal; logoMat.roughness = t.rough; logoMat.envMapIntensity = t.env;
     leafMats[0].color.setHex(t.leafA); leafMats[1].color.setHex(t.leafB); leafMats[2].color.setHex(t.leafC);
     leafMats.forEach((m) => (m.envMapIntensity = t.env)); beanMat.envMapIntensity = t.env;
@@ -114,8 +117,8 @@ function init() {
 
   // ---------- medidas ----------
   let W = 1, H = 1, viewH = 1, viewW = 1;
-  const layout = { fx: 0.7, fy: 0.24, h: 0.3, key: 0.34 };
-  const heroPos = new THREE.Vector3(), headPos = new THREE.Vector3(); let headH = 0.1;
+  const layout = { h: 0.27, key: 0.17 };
+  const heroPos = new THREE.Vector3(), headPos = new THREE.Vector3(), lockPos = new THREE.Vector3(); let headH = 0.1;
   const toWorld = (sx, sy, out) => out.set((sx / W - 0.5) * viewW, (0.5 - sy / H) * viewH, 0);
   function measureHeader() {
     const r = brandLogo.getBoundingClientRect();
@@ -128,15 +131,16 @@ function init() {
     renderer.setSize(W, H, false);
     camera.aspect = W / H; camera.updateProjectionMatrix();
     viewH = 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.position.z; viewW = viewH * camera.aspect;
-    const a = W / H;
-    if (a > 1.15) Object.assign(layout, { fx: 0.76, fy: 0.5, h: 0.6, key: 0.5 });
-    else if (a > 0.75) Object.assign(layout, { fx: 0.74, fy: 0.3, h: 0.36, key: 0.42 });
-    else Object.assign(layout, { fx: 0.7, fy: 0.215, h: 0.27, key: 0.34 });
-    toWorld(layout.fx * W, layout.fy * H, heroPos);
+    const cs = stage.style, num = (k, d) => { const v = parseFloat(cs.getPropertyValue(k)); return Number.isFinite(v) ? v : d; };
+    const kx = num('--key-x', W / 2), ky = num('--key-y', H * 0.4), kh = num('--key-h', H * 0.27);
+    const lx = num('--lock-x', W / 2), ly = num('--lock-y', H / 2), lk = num('--lock-k', H * 0.17);
+    layout.h = kh / H; layout.key = lk / H;
+    toWorld(kx, ky, heroPos); toWorld(lx, ly, lockPos);
     measureHeader();
   }
   resize();
   addEventListener('resize', () => { resize(); if (!running) render(); });
+  addEventListener('btk-layout', () => { resize(); if (!running) render(); });
   if (document.fonts) document.fonts.ready.then(measureHeader);
 
   // progresso da porta (0 a 1), vindo da linha do tempo do app
@@ -188,7 +192,7 @@ function init() {
     camera.lookAt(0, 0, 0);
 
     const fl = Math.sin(t * 0.9) * viewH * 0.012 * (1 - a);
-    keyPos.set(0, 0, -0.9 * ins);
+    keyPos.set(lockPos.x, lockPos.y, -0.9 * ins);
     pos.set(heroPos.x, heroPos.y + fl, 0).lerp(keyPos, a).lerp(headPos, ex);
     const size = lerp(lerp(viewH * layout.h, viewH * layout.key * (1 - 0.1 * ins), a), headH, ex);
     const heroRy = intro.spin + Math.sin(t * 0.45) * 0.38 + ptr.x * 0.55;
@@ -197,6 +201,7 @@ function init() {
     logoPivot.position.copy(pos);
     logoPivot.rotation.set(lerp(heroRx, 0, a) * (1 - ex), lerp(heroRy, keyRy, a) * (1 - ex), lerp(Math.sin(t * 0.5) * 0.04, 0, a) - (Math.PI / 2) * turn * (1 - ex));
     logoPivot.scale.setScalar(Math.max(0.0001, size * intro.k));
+    logoMat.color.copy(brass).lerp(headCol, smooth(seg(P, 0.72, 0.86)));
 
     for (const p of parts) {
       p.y -= p.fall * dt * 0.12 - wind * 0.02;
