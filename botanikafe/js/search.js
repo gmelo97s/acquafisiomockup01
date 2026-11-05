@@ -168,6 +168,9 @@
   function parse(raw) {
     let q = ' ' + clean(raw).trim() + ' ';
     const intent = { tags: [], price: null, sort: null, groups: [], neg: [] };
+    // palavras como a pessoa escreveu (com acento), para os rótulos dos filtros: "sem salmão", não "sem salmao"
+    const ORIG = {};
+    String(raw).split(/\s+/).forEach((w) => { const k = norm(w).replace(/[^a-z0-9]/g, ''); const o = w.replace(/[^\p{L}\p{N}-]/gu, '').toLowerCase(); if (k && o) ORIG[k] = o; });
 
     // preço
     for (const p of PRICE_RE) {
@@ -209,7 +212,7 @@
       }
     }
     // negação genérica: "sem bacon"
-    q = q.replace(/\bsem\s+([a-z]{3,})\b/g, (_, w) => { intent.neg.push({ w, label: 'sem ' + w }); return ' '; });
+    q = q.replace(/\bsem\s+([a-z]{3,})\b/g, (_, w) => { intent.neg.push({ w, label: 'sem ' + (ORIG[w] || w) }); return ' '; });
 
     // termos restantes
     const terms = q.split(/\s+/).filter((t) => t && !STOP.has(t) && !/^\d+$/.test(t) && t.length > 1);
