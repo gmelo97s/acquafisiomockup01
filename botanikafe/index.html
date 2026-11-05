@@ -93,14 +93,10 @@
   </header>
 
   <main>
-    <!-- Abertura: vídeo do Café Bienal ao fundo; o logo vira a chave que abre a porta do cardápio -->
+    <!-- Abertura: o logo vira a chave que abre a porta do cardápio -->
     <div class="gate" id="inicio">
       <div class="gate__stage">
-        <div class="hero__media" aria-hidden="true">
-          <video class="hero__video" id="heroVideo" muted loop playsinline preload="none" disablepictureinpicture disableremoteplayback></video>
-          <span class="hero__scrim"></span>
-          <span class="hero__dim"></span>
-        </div>
+        <div class="hero__bg" aria-hidden="true"><span class="hero__glow"></span><span class="hero__dim"></span></div>
         <div class="doorscene" aria-hidden="true">
           <div class="doorset">
             <span class="sconce sconce--l"></span><span class="sconce sconce--r"></span>
@@ -139,15 +135,16 @@
           <a class="keytag" href="#cardapio" data-open-menu>
             <span class="keytag__cord" aria-hidden="true"></span>
             <span class="keytag__card">
-              <svg class="keytag__paper" viewBox="0 0 124 94" preserveAspectRatio="none" aria-hidden="true">
+              <svg class="keytag__paper" viewBox="0 0 150 100" preserveAspectRatio="none" aria-hidden="true">
                 <defs><linearGradient id="tagPaper" x1="0" y1="0" x2="0.35" y2="1"><stop offset="0" stop-color="#f6eed6"/><stop offset="1" stop-color="#e9dcb8"/></linearGradient></defs>
-                <path fill="url(#tagPaper)" d="M28 1h68l27 20v68a4 4 0 0 1-4 4H5a4 4 0 0 1-4-4V21z"/>
-                <path fill="none" stroke="#2b3820" stroke-opacity=".32" stroke-width="1" d="M30.4 6.5h63.2l23.9 17.6V85a3 3 0 0 1-3 3H9.5a3 3 0 0 1-3-3V24.1z"/>
+                <path fill="url(#tagPaper)" d="M30 1h90l29 21v73a4 4 0 0 1-4 4H5a4 4 0 0 1-4-4V22z"/>
+                <path fill="none" stroke="#2b3820" stroke-opacity=".32" stroke-width="1" d="M32.6 6.5h84.8l26.1 18.8V92a3 3 0 0 1-3 3H9.5a3 3 0 0 1-3-3V25.3z"/>
               </svg>
               <span class="keytag__ring" aria-hidden="true"></span>
-              <span class="keytag__txt"><em>Abrir</em><span>o cardápio</span></span>
+              <span class="keytag__txt"><small>Clique para</small><em>abrir o cardápio</em></span>
             </span>
           </a>
+          <span class="keycue" aria-hidden="true"><i class="keycue__line"></i><i class="keycue__chev"></i></span>
         </div></div>
         <div class="hero__inner">
           <div class="hero__head">
@@ -185,7 +182,7 @@
           <h3 class="news__title" id="newsTitle">Novidades</h3>
           <p class="news__sub">Foam Season: novas cores, novos sabores e uma nova textura.</p>
         </div>
-        <div class="news__track" id="newsTrack"></div>
+        <div class="nloop" id="newsLoop" aria-label="Novidades. Arraste para os lados."><div class="news__track" id="newsTrack"></div></div>
       </section>
 
       <div class="menu__list" id="menuList"></div>

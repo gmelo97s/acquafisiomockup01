@@ -205,7 +205,8 @@
   const px = (v) => Math.round(v) + 'px';
   function heroLayout() {
     const W = stage.clientWidth, H = stage.clientHeight; if (!W || !H) return;
-    const tag = $('.keytag'), ctaH = (tag && tag.offsetHeight) || 112, gap = 2;
+    const tag = $('.keytag'), cue = $('.keycue');
+    const ctaH = ((tag && tag.offsetHeight) || 124) + (cue ? cue.offsetHeight + 12 : 0), gap = 2;
     let x, y, h;
     if (W / H >= 1 && W >= 760) { // paisagem: logo à direita do título, botão logo abaixo
       h = Math.min(H * 0.44, W * 0.25); x = W * 0.74;
@@ -233,37 +234,25 @@
   if (document.fonts) document.fonts.ready.then(heroLayout);
   window.BTK_LAYOUT = heroLayout;
 
-  // ---------- vídeo do hero: carrega depois da página; nada com economia de dados ou "menos movimento" ----------
-  const heroVid = $('#heroVideo'), conn = navigator.connection || {};
-  const vidOK = !!heroVid && !reduced && !conn.saveData && !/2g/.test(conn.effectiveType || '');
-  let vidKind = '', vidVisible = true, vidCovered = false;
-  function syncVideo() {
-    if (!vidKind) return;
-    if (vidVisible && !vidCovered && !document.hidden) { const pr = heroVid.play(); if (pr && pr.catch) pr.catch(() => {}); } else heroVid.pause();
-  }
-  function pickVideo() {
-    if (!vidOK) return;
-    const k = innerWidth / innerHeight >= 1 ? 'd' : 'm'; if (k === vidKind) return;
-    vidKind = k; heroVid.classList.remove('is-on');
-    // AV1 (Chrome, Firefox, Android) → HEVC (iPhone, Safari) → H.264 (qualquer navegador)
-    heroVid.innerHTML = `<source src="vid/hero-${k}.av1.mp4" type='video/mp4; codecs="av01.0.08M.08"'><source src="vid/hero-${k}.hevc.mp4" type='video/mp4; codecs="hvc1.1.6.L120.90"'><source src="vid/hero-${k}.mp4" type="video/mp4">`;
-    heroVid.load(); syncVideo();
-  }
-  if (heroVid) {
-    heroVid.muted = true;
-    heroVid.addEventListener('playing', () => heroVid.classList.add('is-on'));
-    const startVid = () => setTimeout(pickVideo, 250);
-    if (document.readyState === 'complete') startVid(); else addEventListener('load', startVid, { once: true });
-    addEventListener('resize', () => { if (vidKind) pickVideo(); });
-    new IntersectionObserver(([en]) => { vidVisible = en.isIntersecting; syncVideo(); }).observe(stage);
-    document.addEventListener('visibilitychange', syncVideo);
-  }
-  // topo com texto claro enquanto está sobre o vídeo/porta
+  // topo com texto claro enquanto está sobre a abertura/porta
   const setOnHero = (on) => root.classList.toggle('on-hero', on);
   if (!gateOn) { const f = () => setOnHero(scrollY < stage.offsetHeight - hdrH()); addEventListener('scroll', f, { passive: true }); f(); }
   else setOnHero(scrollY < 40);
   const keyTag = $('.keytag');
   if (keyTag) keyTag.addEventListener('click', () => { keyTag.classList.add('pull'); setTimeout(() => keyTag.classList.remove('pull'), 1200); });
+  // dica animada abaixo da etiqueta: entra depois da abertura do hero, some quando a pessoa interage
+  // e não volta na mesma visita depois que o cardápio já foi aberto (ela já aprendeu o caminho)
+  const keyCue = $('.keycue');
+  let cueReady = false, cueDone = false;
+  try { cueDone = sessionStorage.getItem('btk-opened') === '1'; } catch (e) { /* ok */ }
+  const cueShow = (on) => { if (keyCue) keyCue.classList.toggle('on', on && cueReady && !cueDone); };
+  const cueLearned = () => { if (cueDone) return; cueDone = true; cueShow(false); try { sessionStorage.setItem('btk-opened', '1'); } catch (e) { /* ok */ } };
+  if (keyCue) {
+    const ready = () => { cueReady = true; cueShow(scrollY < 40); };
+    if (!hasGSAP || reduced) ready(); else addEventListener('btk-hero-in', () => setTimeout(ready, scrollY > 20 ? 0 : 2100), { once: true });
+    if (keyTag) keyTag.addEventListener('click', cueLearned);
+    if (!gateOn) addEventListener('scroll', () => cueShow(scrollY < 40), { passive: true });
+  }
 
   // ---------- busca do topo: exemplos digitando ----------
   const typedEl = $('#typed');
@@ -401,27 +390,97 @@
   // =========================================================
   // NOVIDADES
   // =========================================================
-  const newsTrack = $('#newsTrack');
+  // carrossel em loop infinito (novidades e galeria): anda sozinho, desacelera com o mouse em cima,
+  // arrasta com o dedo e um toque simples continua sendo clique
+  function makeLoop(el, track, o) {
+    let items = [], imgs = [];
+    let x = 0, v = 0, setW = 0, pressed = false, dragging = false, startX = 0, lastX = 0, lastT = 0, moved = 0, pid = null;
+    let resumeAt = 0, hover = false, focus = false, visible = false, paused = false, raf = 0, prev = 0;
+    const SPEED = innerWidth < 760 ? 34 : 46; // px/s
+    let step = 0, cardW = 0, baseLeft = 0;
+    const measure = () => {
+      const a = items[0], b = items[1], c = items[o.setLen()]; if (!a || !b || !c) return;
+      setW = c.offsetLeft - a.offsetLeft; step = b.offsetLeft - a.offsetLeft; cardW = a.offsetWidth;
+      baseLeft = el.getBoundingClientRect().left + a.offsetLeft;
+    };
+    const collect = () => { items = $$(o.item, track); imgs = items.map((it) => it.querySelector(o.img)); measure(); };
+    collect(); addEventListener('resize', measure);
+    if (document.fonts) document.fonts.ready.then(measure);
+    function frame(t) {
+      raf = requestAnimationFrame(frame);
+      const dt = Math.min(0.05, (t - (prev || t)) / 1000); prev = t;
+      if (!dragging) {
+        const auto = reduced || pressed || focus || t < resumeAt ? 0 : (hover ? 0.25 : 1) * SPEED;
+        v += (-auto - v) * Math.min(1, dt * (pressed ? 8 : 2.2)); // segurar com o dedo freia; ao soltar o ritmo volta suave
+        x += v * dt;
+      }
+      if (setW) { while (x <= -setW) x += setW; while (x > 0) x -= setW; }
+      track.style.transform = `translate3d(${x.toFixed(2)}px,0,0)`;
+      const vw = innerWidth;
+      for (let i = 0; i < imgs.length; i++) { // parallax calculado, sem medir o layout a cada quadro
+        if (!imgs[i]) continue;
+        const cx = baseLeft + x + i * step + cardW / 2;
+        if (cx < -cardW || cx > vw + cardW) continue;
+        imgs[i].style.setProperty('--px', (o.px0 - ((cx - vw / 2) / vw) * o.pxA).toFixed(2) + '%');
+      }
+    }
+    const start = () => { if (!raf && visible && !paused && !document.hidden) { prev = 0; raf = requestAnimationFrame(frame); } };
+    const stop = () => { cancelAnimationFrame(raf); raf = 0; };
+    new IntersectionObserver(([en]) => { visible = en.isIntersecting; visible ? start() : stop(); }).observe(el);
+    document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
+    addEventListener('btk-pause', () => { paused = true; stop(); });
+    addEventListener('btk-resume', () => { paused = false; start(); });
+    // arrastar só "pega" o carrossel depois de alguns pixels: um toque simples continua sendo clique
+    el.addEventListener('pointerdown', (e) => {
+      if (e.button > 0) return;
+      pressed = true; dragging = false; moved = 0; startX = lastX = e.clientX; lastT = performance.now(); pid = e.pointerId;
+    });
+    el.addEventListener('pointermove', (e) => {
+      if (!pressed) return;
+      const now = performance.now(), dx = e.clientX - lastX;
+      if (!dragging) {
+        if (Math.abs(e.clientX - startX) < 6) return;
+        dragging = true; v = 0; el.classList.add('dragging');
+        try { el.setPointerCapture(pid); } catch (err) { /* ok */ }
+      }
+      x += dx; moved += Math.abs(dx);
+      v = 0.8 * (dx / Math.max(1, now - lastT)) * 1000 + 0.2 * v;
+      lastX = e.clientX; lastT = now;
+    });
+    const end = () => {
+      if (!pressed) return; pressed = false;
+      if (dragging) { dragging = false; el.classList.remove('dragging'); resumeAt = performance.now() + 1400; }
+    };
+    el.addEventListener('pointerup', end); el.addEventListener('pointercancel', end); el.addEventListener('lostpointercapture', end);
+    el.addEventListener('click', (e) => { if (moved > 6) { e.preventDefault(); e.stopPropagation(); moved = 0; } }, true);
+    el.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') hover = true; });
+    el.addEventListener('pointerleave', () => { hover = false; });
+    // navegando pelo teclado, o carrossel fica parado para a pessoa ler
+    el.addEventListener('focusin', () => { focus = true; });
+    el.addEventListener('focusout', () => { focus = false; });
+    return { rebuild() { x = 0; collect(); } };
+  }
+  // quantas vezes o conjunto se repete para ficar mais largo que a tela (o loop precisa disso para não ter buraco)
+  const loopReps = (n, cardW) => Math.max(1, Math.ceil((innerWidth + cardW) / (n * cardW)));
+
+  const newsTrack = $('#newsTrack'), newsLoop = $('#newsLoop');
+  let newsSetLen = 0;
   if (foam) {
     const items = foam.secs.flatMap((s) => s.items);
-    newsTrack.innerHTML = items.map((it) => `
-      <button class="ncard" type="button" data-id="${it.id}" data-tags="${esc((it.t || []).join('|'))}" aria-label="${esc(it.n)}, ${esc(priceText(it))}">
-        <span class="ncard__media"><img src="${it.i}" alt="" loading="lazy" decoding="async"><span class="ncard__tag">Novo</span></span>
+    const ncard = (it, dup) => `
+      <button class="ncard" type="button" data-id="${it.id}" data-tags="${esc((it.t || []).join('|'))}"${dup ? ' aria-hidden="true" tabindex="-1"' : ` aria-label="${esc(it.n)}, ${esc(priceText(it))}"`}>
+        <span class="ncard__media"><img src="${it.i}" alt="" loading="lazy" decoding="async" draggable="false"><span class="ncard__tag">Novo</span></span>
         <span class="ncard__body"><span class="ncard__name">${esc(it.n)}</span><span class="ncard__desc">${esc(it.d)}</span>
           <span class="ncard__foot"><span class="ncard__price">${esc(priceText(it))}</span><span class="ncard__more">Ver<svg><use href="#i-arrow"/></svg></span></span></span>
-      </button>`).join('');
+      </button>`;
+    const reps = loopReps(items.length, (innerWidth >= 1024 ? 320 : innerWidth >= 760 ? 300 : Math.min(300, innerWidth * 0.74)) + 14);
+    const set = []; for (let r = 0; r < reps; r++) set.push(...items);
+    newsSetLen = set.length;
+    newsTrack.innerHTML = set.map((it, k) => ncard(it, k >= items.length)).join('') + set.map((it) => ncard(it, true)).join('');
+    makeLoop(newsLoop, newsTrack, { item: '.ncard', img: '.ncard__media img', setLen: () => newsSetLen, px0: -6, pxA: 6 });
   } else newsSec.remove();
   newsTrack.addEventListener('click', (e) => { const c = e.target.closest('.ncard'); if (c) openItem(c.dataset.id, c); });
-  // parallax da foto ao arrastar o carrossel (celular)
   const newsCards = $$('.ncard', newsTrack);
-  let newsRaf = 0;
-  const newsParallax = () => {
-    newsRaf = 0;
-    const tr = newsTrack.getBoundingClientRect(), cx = tr.left + tr.width / 2;
-    newsCards.forEach((c) => { const r = c.getBoundingClientRect(); const d = (r.left + r.width / 2 - cx) / tr.width; c.style.setProperty('--px', (-6 - d * 6).toFixed(2) + '%'); });
-  };
-  newsTrack.addEventListener('scroll', () => { if (!newsRaf) newsRaf = requestAnimationFrame(newsParallax); }, { passive: true });
-  newsParallax();
   // inclinação 3D com o mouse (desktop)
   if (finePointer && !reduced) {
     newsCards.forEach((c) => {
@@ -733,77 +792,13 @@
   let setLen = 0;
   function fillTrack() {
     const n = GITEMS.length, cardW = (innerWidth >= 760 ? 300 : innerWidth * 0.64) + 14;
-    const reps = Math.max(1, Math.ceil((innerWidth + cardW) / (n * cardW)));
+    const reps = loopReps(n, cardW);
     const set = []; for (let r = 0; r < reps; r++) GITEMS.forEach((g, i) => set.push([g, i]));
     setLen = set.length;
     loopTrack.innerHTML = set.map(([g, i], k) => shotHTML(g, i, k >= n)).join('') + set.map(([g, i]) => shotHTML(g, i, true)).join('');
   }
   fillTrack();
-  const loopAPI = (function loop() {
-    let shots = [], imgs = [];
-    let x = 0, v = 0, setW = 0, pressed = false, dragging = false, startX = 0, lastX = 0, lastT = 0, moved = 0, pid = null;
-    let resumeAt = 0, hover = false, visible = false, paused = false, raf = 0, prev = 0;
-    const SPEED = innerWidth < 760 ? 34 : 46; // px/s
-    let step = 0, cardW = 0, baseLeft = 0;
-    const measure = () => {
-      const a = shots[0], b = shots[1], c = shots[setLen]; if (!a || !b || !c) return;
-      setW = c.offsetLeft - a.offsetLeft; step = b.offsetLeft - a.offsetLeft; cardW = a.offsetWidth;
-      baseLeft = loopEl.getBoundingClientRect().left + a.offsetLeft;
-    };
-    const collect = () => { shots = $$('.shot', loopTrack); imgs = shots.map((sh) => sh.querySelector('img')); measure(); };
-    collect(); addEventListener('resize', measure);
-    if (document.fonts) document.fonts.ready.then(measure);
-    function frame(t) {
-      raf = requestAnimationFrame(frame);
-      const dt = Math.min(0.05, (t - (prev || t)) / 1000); prev = t;
-      if (!dragging) {
-        const auto = reduced || pressed || t < resumeAt ? 0 : (hover ? 0.25 : 1) * SPEED;
-        v += (-auto - v) * Math.min(1, dt * (pressed ? 8 : 2.2)); // segurar com o dedo freia; ao soltar o ritmo volta suave
-        x += v * dt;
-      }
-      if (setW) { while (x <= -setW) x += setW; while (x > 0) x -= setW; }
-      loopTrack.style.transform = `translate3d(${x.toFixed(2)}px,0,0)`;
-      const vw = innerWidth;
-      for (let i = 0; i < imgs.length; i++) { // parallax calculado, sem medir o layout a cada quadro
-        if (!imgs[i]) continue;
-        const cx = baseLeft + x + i * step + cardW / 2;
-        if (cx < -cardW || cx > vw + cardW) continue;
-        imgs[i].style.setProperty('--px', (-8 - ((cx - vw / 2) / vw) * 7).toFixed(2) + '%');
-      }
-    }
-    const start = () => { if (!raf && visible && !paused && !document.hidden) { prev = 0; raf = requestAnimationFrame(frame); } };
-    const stop = () => { cancelAnimationFrame(raf); raf = 0; };
-    new IntersectionObserver(([en]) => { visible = en.isIntersecting; visible ? start() : stop(); }).observe(loopEl);
-    document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
-    addEventListener('btk-pause', () => { paused = true; stop(); });
-    addEventListener('btk-resume', () => { paused = false; start(); });
-    // arrastar só "pega" o carrossel depois de alguns pixels: um toque simples continua sendo clique na foto
-    loopEl.addEventListener('pointerdown', (e) => {
-      if (e.button > 0) return;
-      pressed = true; dragging = false; moved = 0; startX = lastX = e.clientX; lastT = performance.now(); pid = e.pointerId;
-    });
-    loopEl.addEventListener('pointermove', (e) => {
-      if (!pressed) return;
-      const now = performance.now(), dx = e.clientX - lastX;
-      if (!dragging) {
-        if (Math.abs(e.clientX - startX) < 6) return;
-        dragging = true; v = 0; loopEl.classList.add('dragging');
-        try { loopEl.setPointerCapture(pid); } catch (err) { /* ok */ }
-      }
-      x += dx; moved += Math.abs(dx);
-      v = 0.8 * (dx / Math.max(1, now - lastT)) * 1000 + 0.2 * v;
-      lastX = e.clientX; lastT = now;
-    });
-    const end = () => {
-      if (!pressed) return; pressed = false;
-      if (dragging) { dragging = false; loopEl.classList.remove('dragging'); resumeAt = performance.now() + 1400; }
-    };
-    loopEl.addEventListener('pointerup', end); loopEl.addEventListener('pointercancel', end); loopEl.addEventListener('lostpointercapture', end);
-    loopEl.addEventListener('click', (e) => { if (moved > 6) { e.preventDefault(); e.stopPropagation(); moved = 0; } }, true);
-    loopEl.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') hover = true; });
-    loopEl.addEventListener('pointerleave', () => { hover = false; });
-    return { rebuild() { x = 0; collect(); } };
-  })();
+  const loopAPI = makeLoop(loopEl, loopTrack, { item: '.shot', img: 'img', setLen: () => setLen, px0: -8, pxA: 7 });
   loopTrack.addEventListener('click', (e) => { const b = e.target.closest('.shot__img'); if (b) openLightbox(+b.dataset.i, b); });
 
   // últimos reels do Instagram (só aparecem se a conta do café estiver conectada na Vercel)
@@ -960,13 +955,15 @@
       .fromTo(W('.hero__title .w'), { yPercent: 0, opacity: 1 }, { yPercent: -120, opacity: 0, stagger: 0.012, duration: 0.14, ease: 'power2.in' }, 0.02)
       .fromTo(W('.hero__sub, .hsearch'), { y: 0, autoAlpha: 1 }, { y: 26, autoAlpha: 0, stagger: 0.02, duration: 0.12, ease: 'power2.in' }, 0)
       .fromTo('.keycta', { y: 0, autoAlpha: 1 }, { y: 16, autoAlpha: 0, duration: 0.08, ease: 'power2.in' }, 0)
+      // o título some de verdade (invisível, ele ainda pegaria os toques no topo do cardápio)
+      .fromTo('.hero__inner', { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.01 }, 0.2)
       .fromTo('.brand__logo', { opacity: 1 }, { opacity: 0, duration: 0.05 }, 0.1)
-      // a câmera chega na entrada: o vídeo escurece e a porta aparece
-      .fromTo('.hero__media', { scale: 1 }, { scale: 1.14, duration: 0.28, ease: 'power1.in' }, 0)
+      // a câmera chega na entrada: o fundo escurece e a porta aparece
+      .fromTo('.hero__bg', { scale: 1 }, { scale: 1.14, duration: 0.28, ease: 'power1.in' }, 0)
       .fromTo('.hero__dim', { opacity: 0 }, { opacity: 0.92, duration: 0.16, ease: 'power1.in' }, 0.04)
       .fromTo('.doorscene', { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.14, ease: 'power1.inOut' }, 0.1)
       .fromTo('.doorset', { scale: 1.22 }, { scale: 1, duration: 0.2, ease: 'power2.out' }, 0.08)
-      .fromTo('.hero__media', { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.01 }, 0.3)
+      .fromTo('.hero__bg', { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.01 }, 0.3)
       // a chave encaixa e gira: a fechadura brilha
       .fromTo('.gate__glow', { opacity: 0, scale: 0.6 }, { opacity: 0.9, scale: 1, duration: 0.16, ease: 'power2.out' }, 0.3)
       .fromTo('.doorway__seam', { scaleY: 0, opacity: 1 }, { scaleY: 1, duration: 0.1, ease: 'power2.out' }, 0.44)
@@ -995,7 +992,8 @@
       }
       if (p < 0.4) burstDone = false;
       setOnHero(p < 0.8);
-      const cov = p > 0.3; if (cov !== vidCovered) { vidCovered = cov; syncVideo(); }
+      cueShow(p < 0.01);
+      if (p > 0.5) cueLearned();
     });
     ScrollTrigger.create({
       trigger: '.gate', start: 'top top', end: () => '+=' + Math.max(1, $('.gate').offsetHeight - $('.gate__stage').offsetHeight), scrub: lenis ? true : 0.35, animation: gate, invalidateOnRefresh: true,
@@ -1005,11 +1003,8 @@
 
   if (hasGSAP && !reduced) {
     // novidades entram com profundidade
-    gsap.from('.ncard', { y: 60, rotateX: -22, opacity: 0, transformPerspective: 900, transformOrigin: '50% 100%', stagger: 0.09, duration: 1.1, ease: 'expo.out', clearProps: 'transform,opacity',
-      scrollTrigger: { trigger: '#novidades', start: 'top 85%', once: true, onEnter: () => {
-        FX.gust(1, 4, 0.2, 0.5);
-        if (innerWidth < 1024 && newsTrack.scrollWidth > newsTrack.clientWidth) setTimeout(() => { newsTrack.scrollBy({ left: 70, behavior: 'smooth' }); setTimeout(() => newsTrack.scrollBy({ left: -70, behavior: 'smooth' }), 650); }, 900);
-      } } });
+    gsap.from($$('.ncard', newsTrack).slice(0, 5), { y: 60, rotateX: -22, opacity: 0, transformPerspective: 900, transformOrigin: '50% 100%', stagger: 0.09, duration: 1.1, ease: 'expo.out', clearProps: 'transform,opacity',
+      scrollTrigger: { trigger: '#novidades', start: 'top 85%', once: true, onEnter: () => FX.gust(1, 4, 0.2, 0.5) } });
     gsap.from('.menu__head > *', { opacity: 0, y: 30, stagger: 0.08, duration: 1, ease: 'expo.out', scrollTrigger: { trigger: '.menu__head', start: 'top 85%', once: true } });
     gsap.from('.gallery .sechead__title', { opacity: 0, y: 40, duration: 1.1, ease: 'expo.out', scrollTrigger: { trigger: '.gallery', start: 'top 80%', once: true, onEnter: () => FX.gust(-1, 5, 0.15, 0.55) } });
     gsap.from('.shot', { opacity: 0, y: 50, stagger: 0.05, duration: 1, ease: 'expo.out', scrollTrigger: { trigger: '.loop', start: 'top 90%', once: true } });

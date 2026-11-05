@@ -6,10 +6,10 @@ No ar: https://botanikafe.vercel.app
 
 ## O que tem
 
-- **Hero com vídeo**: loop do Café Bienal ao fundo (versões para celular e desktop), feito com as fotos do site oficial.
-- **Abertura com a chave**: o botão "Abrir o cardápio" é uma etiqueta de chaveiro pendurada no logo 3D. Ao tocar nela (ou depois de ~2 rolagens, no celular e no desktop), a porta abre sozinha: o logo vira a chave, entra na fechadura de uma porta dupla de madeira com vidro jateado e latão, gira, as folhas abrem para dentro e a câmera atravessa até o cardápio. Voltando ~2 rolagens a partir do topo do cardápio, a porta fecha sozinha e volta ao início.
+- **Hero**: fundo verde-floresta da marca com uma luz dourada que "respira" atrás do logo 3D.
+- **Abertura com a chave**: o botão "Clique para abrir o cardápio" é uma etiqueta de chaveiro pendurada no logo 3D, com uma dica animada apontando para baixo (some quando a pessoa interage e não volta depois que o cardápio já foi aberto na visita). Ao tocar nela (ou depois de ~2 rolagens, no celular e no desktop), a porta abre sozinha: o logo vira a chave, entra na fechadura de uma porta dupla de madeira com vidro jateado e latão, gira, as folhas abrem para dentro e a câmera atravessa até o cardápio. Voltando ~2 rolagens a partir do topo do cardápio, a porta fecha sozinha e volta ao início.
 - **Menu inferior (celular)**: só aparece a partir das Novidades; nunca cobre o hero e a porta.
-- **Novidades**: carrossel com toque direto, parallax nas fotos e inclinação 3D no desktop.
+- **Novidades**: carrossel em loop automático (o mesmo da galeria), arrastável, com parallax nas fotos e inclinação 3D no desktop; tocar num card abre a ficha.
 - **Cardápio completo**: 208 itens, abas por categoria, filtros (vegano, sem glúten etc.), fotos de garrafa sem corte.
 - **Tags que pesquisam**: tocar em "Vegano", "Picante", "Sem lactose"… (na lista ou na ficha) abre a busca com todos os itens daquela tag.
 - **"Combina com"**: todos os itens têm 3 sugestões. Bebida sugere comidas, comida sugere bebidas, e os casos especiais (café em grãos, leites, adicionais do bowl, água) têm sugestões próprias (`js/pairings.js`).
@@ -27,12 +27,6 @@ Os preços vêm do cardápio oficial. Quatro itens chegam sem preço no campo de
 - **Banana Bread** e **Gin Tônica** têm o preço escrito na descrição. Aqui eles viraram opções com preço ("a partir de").
 - **ADD ONS** (adicionais do bowl) mostra "a partir de" com o menor adicional.
 - **Grãos** (café para levar) não tem preço no oficial ("consulte valores") e continua como "consulte".
-
-## Vídeo do hero
-
-- Arquivos em `vid/`: `hero-d.*` (desktop, 1920×1080) e `hero-m.*` (celular, 1080×1920), cada um em AV1 (`.av1.mp4`), HEVC (`.hevc.mp4`, iPhone/Safari) e H.264 (`.mp4`, reserva). O navegador baixa só um, de cerca de 2,5 MB.
-- A capa (`hero-*.webp`) aparece na hora; o vídeo só começa a baixar depois que a página termina de carregar.
-- Não baixa com economia de dados ligada nem com "reduzir movimento". Pausa quando a porta cobre o hero ou a aba fica em segundo plano.
 
 ## Reels do Instagram na galeria
 
@@ -60,9 +54,8 @@ O token vale 60 dias. Se a galeria voltar a mostrar as fotos, gere um token novo
 | `js/search.js` | Busca inteligente |
 | `js/hero3d.js` | Logo 3D (a chave), folhas e grãos (Three.js) |
 | `js/leaves.js` | Folhas 2D das transições |
-| `js/app.js` | Interface, vídeo do hero, abertura com a chave e a porta, galeria, ficha do item |
+| `js/app.js` | Interface, abertura com a chave e a porta, carrosséis (novidades e galeria), ficha do item |
 | `api/reels.js` | Últimos reels do Instagram (precisa de `IG_TOKEN`) |
-| `vid/` | Vídeo do hero e capas |
 | `img/door/` | Textura do vidro jateado da porta |
 
 ## Usar como modelo para outro restaurante
@@ -70,7 +63,7 @@ O token vale 60 dias. Se a galeria voltar a mostrar as fotos, gere um token novo
 1. Troque `js/menu-data.js` e as fotos em `img/m/` pelo cardápio do restaurante (mesmo formato).
 2. Troque o símbolo do logo (`<symbol id="logo">` no `index.html`) e as cores no `:root` do CSS.
 3. Ajuste as regras de `js/pairings.js` aos nomes dos novos itens.
-4. Troque textos do topo, endereço, fotos da galeria e o vídeo em `vid/`.
+4. Troque textos do topo, endereço e fotos da galeria.
 
 ## Publicar
 
