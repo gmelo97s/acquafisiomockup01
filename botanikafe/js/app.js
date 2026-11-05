@@ -72,37 +72,77 @@
     else { const raf = (t) => { lenis.raf(t); requestAnimationFrame(raf); }; requestAnimationFrame(raf); }
   }
   const hdrH = () => parseInt(getComputedStyle(root).getPropertyValue('--hdr-h'), 10) || 60;
-  let scrollRaf = 0;
-  const stopScrollAnim = () => cancelAnimationFrame(scrollRaf);
+  const inOut3 = (k) => (k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2);
+  let scrollRaf = 0, autoGate = false, navScrolling = false; // navScrolling: rolagem pedida por um link (o menu inferior não some)
+  const stopScrollAnim = () => { if (!autoGate) { cancelAnimationFrame(scrollRaf); navScrolling = false; } };
   addEventListener('wheel', stopScrollAnim, { passive: true });
   addEventListener('touchstart', stopScrollAnim, { passive: true });
-  function scrollToY(y, dur) {
+  // enquanto a porta abre (ou fecha) sozinha, o dedo e a roda não interrompem
+  const holdInput = (e) => { if (autoGate && e.cancelable) e.preventDefault(); };
+  addEventListener('touchmove', holdInput, { passive: false });
+  addEventListener('wheel', holdInput, { passive: false });
+  function scrollToY(y, dur, done0) {
     y = Math.max(0, Math.min(y, root.scrollHeight - innerHeight));
-    // trajetos longos (atravessar a porta) com aceleração e freio suaves, para dar tempo de ver a chave e a porta
-    if (lenis) { lenis.scrollTo(y, dur >= 2000 ? { duration: dur / 1000, easing: (k) => (k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2) } : { duration: (dur || 1200) / 1000 }); return; }
-    if (reduced) { window.scrollTo(0, y); return; }
-    stopScrollAnim();
+    navScrolling = true;
+    const done = () => { navScrolling = false; if (done0) done0(); };
+    if (lenis) { lenis.scrollTo(y, { duration: (dur || 1200) / 1000, easing: dur >= 2000 ? inOut3 : undefined, lock: autoGate, force: autoGate, onComplete: done }); return; }
+    if (reduced) { window.scrollTo(0, y); if (done) done(); return; }
+    cancelAnimationFrame(scrollRaf);
     const y0 = scrollY, d = y - y0, T = dur || Math.min(1400, 450 + Math.abs(d) * 0.3), t0 = performance.now();
     const step = (t) => {
-      const k = Math.min(1, (t - t0) / T), e = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
-      window.scrollTo(0, y0 + d * e); if (k < 1) scrollRaf = requestAnimationFrame(step);
+      const k = Math.min(1, (t - t0) / T);
+      window.scrollTo(0, y0 + d * inOut3(k));
+      if (k < 1) scrollRaf = requestAnimationFrame(step); else if (done) done();
     };
     scrollRaf = requestAnimationFrame(step);
   }
   const docTop = (el) => el.getBoundingClientRect().top + scrollY;
   const OFFSETS = { '#inicio': null, '#cardapio': 0, '#novidades': () => -(hdrH() + 64) };
-  function goTo(hash, dur) {
+  function goTo(hash, dur, done) {
     const el = $(hash); if (!el) return;
-    if (hash === '#inicio') { scrollToY(0, dur || 1600); return; }
+    if (hash === '#inicio') { scrollToY(0, dur || 1600, done); return; }
     const o = OFFSETS[hash];
     const off = typeof o === 'function' ? o() : o != null ? o : -(hdrH() + 14);
-    scrollToY(docTop(el) + off, dur);
+    scrollToY(docTop(el) + off, dur, done);
   }
+
+  // ---------- a porta abre sozinha depois de ~2 rolagens (como um toque na chave) e fecha ao voltar ----------
+  const gateEndY = () => docTop($('#cardapio'));
+  let gateBase = 'hero', lastGY = 0;
+  function runGate(dir, then) {
+    if (!gateOn || autoGate) return;
+    autoGate = true; gateBase = null;
+    if (!lenis) root.classList.add('gate-lock'); // no celular, corta o embalo da rolagem
+    const end = gateEndY(), y0 = scrollY;
+    const dur = dir > 0 ? 3200 : Math.min(3400, 2400 + Math.max(0, y0 - end) * 0.25);
+    scrollToY(dir > 0 ? end : 0, dur, () => {
+      autoGate = false; root.classList.remove('gate-lock');
+      gateBase = dir > 0 ? 'menu' : 'hero'; lastGY = scrollY;
+      if (then) then();
+    });
+  }
+  function gateWatch() {
+    if (!gateOn || autoGate) { lastGY = scrollY; return; }
+    const y = scrollY, end = gateEndY(), T = Math.min(140, Math.max(70, innerHeight * 0.12));
+    const down = y > lastGY, up = y < lastGY; lastGY = y;
+    if (y <= 2) { gateBase = 'hero'; return; }
+    if (y >= end - 2) { gateBase = 'menu'; return; }
+    if (down && gateBase !== 'menu' && y > T) runGate(1);
+    else if (up && gateBase !== 'hero' && y < end - T) runGate(-1);
+  }
+  addEventListener('scroll', gateWatch, { passive: true });
   $$('a[href^="#"]').forEach((a) => a.addEventListener('click', (e) => {
     const id = a.getAttribute('href'); if (id.length < 2 || !$(id)) return;
     e.preventDefault();
-    const throughGate = gateOn && scrollY < docTop($('#cardapio')) - 10 && id !== '#inicio';
-    goTo(id, a.hasAttribute('data-open-menu') || (throughGate && id === '#cardapio') ? 3200 : undefined);
+    if (gateOn) {
+      const y = scrollY, end = gateEndY();
+      if (id !== '#inicio' && y < end - 10) { // no hero: a porta abre e, se for o caso, segue até a seção
+        if (a.hasAttribute('data-open-menu') || id === '#cardapio') runGate(1); else runGate(1, () => goTo(id));
+        return;
+      }
+      if (id === '#inicio' && y > 10) { runGate(-1); return; }
+    }
+    goTo(id);
   }));
 
   function lockScroll(on) {
@@ -135,14 +175,17 @@
   });
 
   // ---------- topo / dock ----------
-  const hdr = $('#hdr'), dock = $('.dock'), menuEl = $('#cardapio');
+  const hdr = $('#hdr'), dock = $('.dock'), menuEl = $('#cardapio'), newsEl = $('#novidades');
   if (hasGSAP && !reduced) dock.classList.add('pre');
   let lastY = scrollY;
   function onScroll() {
     const y = scrollY;
     const past = gateOn ? y >= docTop(menuEl) - 4 : y > 30;
     hdr.classList.toggle('scrolled', past);
-    if (Math.abs(y - lastY) > 6) { dock.classList.toggle('hide', y > lastY && y > docTop(menuEl) + 400); lastY = y; }
+    // menu inferior só a partir das Novidades: nunca em cima do vídeo e da porta
+    const nt = newsEl && newsEl.offsetParent ? newsEl.getBoundingClientRect().top : menuEl.getBoundingClientRect().top + 200;
+    dock.classList.toggle('away', nt > innerHeight * 0.86);
+    if (Math.abs(y - lastY) > 6) { if (!navScrolling) dock.classList.toggle('hide', y > lastY && y > docTop(menuEl) + 400); lastY = y; }
   }
   addEventListener('scroll', onScroll, { passive: true }); onScroll();
   const navIO = new IntersectionObserver((ents) => {
@@ -162,7 +205,7 @@
   const px = (v) => Math.round(v) + 'px';
   function heroLayout() {
     const W = stage.clientWidth, H = stage.clientHeight; if (!W || !H) return;
-    const btn = $('.keycta__btn'), ctaH = (btn && btn.offsetHeight) || 56, gap = 22;
+    const tag = $('.keytag'), ctaH = (tag && tag.offsetHeight) || 112, gap = 2;
     let x, y, h;
     if (W / H >= 1 && W >= 760) { // paisagem: logo à direita do título, botão logo abaixo
       h = Math.min(H * 0.44, W * 0.25); x = W * 0.74;
@@ -219,8 +262,8 @@
   const setOnHero = (on) => root.classList.toggle('on-hero', on);
   if (!gateOn) { const f = () => setOnHero(scrollY < stage.offsetHeight - hdrH()); addEventListener('scroll', f, { passive: true }); f(); }
   else setOnHero(scrollY < 40);
-  const keyBtn = $('.keycta__btn');
-  if (keyBtn) keyBtn.addEventListener('click', () => { keyBtn.classList.add('turn'); setTimeout(() => keyBtn.classList.remove('turn'), 1800); });
+  const keyTag = $('.keytag');
+  if (keyTag) keyTag.addEventListener('click', () => { keyTag.classList.add('pull'); setTimeout(() => keyTag.classList.remove('pull'), 1200); });
 
   // ---------- busca do topo: exemplos digitando ----------
   const typedEl = $('#typed');
@@ -901,7 +944,8 @@
     tl.from('.hero__title .w', { yPercent: 115, rotate: 7, duration: 1.3, stagger: 0.07 })
       .from('.hero__sub', { opacity: 0, y: 20, duration: 1 }, 0.35)
       .from('.hsearch', { opacity: 0, y: 26, duration: 1.1 }, 0.45)
-      .from('.keycta__btn', { opacity: 0, y: 16, scale: 0.94, duration: 1.1 }, 0.55)
+      .from('.keytag__cord', { scaleY: 0, duration: 0.6, ease: 'power2.out', clearProps: 'transform' }, 0.6)
+      .from('.keytag__card', { y: -22, rotate: -14, opacity: 0, duration: 1.6, ease: 'elastic.out(1, 0.5)', clearProps: 'transform,opacity' }, 0.8)
       .from('.hdr', { opacity: 0, duration: 0.9 }, 0.2)
       .add(() => dock.classList.remove('pre'), 0.6);
     window.dispatchEvent(new Event('btk-hero-in'));

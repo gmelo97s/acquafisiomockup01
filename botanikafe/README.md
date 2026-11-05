@@ -7,7 +7,8 @@ No ar: https://botanikafe.vercel.app
 ## O que tem
 
 - **Hero com vídeo**: loop do Café Bienal ao fundo (versões para celular e desktop), feito com as fotos do site oficial.
-- **Abertura com a chave**: o botão "Abrir o cardápio" fica logo abaixo do logo 3D. Ao tocar (ou rolar), o logo vira a chave, entra na fechadura de uma porta dupla de madeira com vidro jateado e latão, gira, as folhas abrem para dentro e a câmera atravessa até o cardápio.
+- **Abertura com a chave**: o botão "Abrir o cardápio" é uma etiqueta de chaveiro pendurada no logo 3D. Ao tocar nela (ou depois de ~2 rolagens, no celular e no desktop), a porta abre sozinha: o logo vira a chave, entra na fechadura de uma porta dupla de madeira com vidro jateado e latão, gira, as folhas abrem para dentro e a câmera atravessa até o cardápio. Voltando ~2 rolagens a partir do topo do cardápio, a porta fecha sozinha e volta ao início.
+- **Menu inferior (celular)**: só aparece a partir das Novidades; nunca cobre o hero e a porta.
 - **Novidades**: carrossel com toque direto, parallax nas fotos e inclinação 3D no desktop.
 - **Cardápio completo**: 208 itens, abas por categoria, filtros (vegano, sem glúten etc.), fotos de garrafa sem corte.
 - **Tags que pesquisam**: tocar em "Vegano", "Picante", "Sem lactose"… (na lista ou na ficha) abre a busca com todos os itens daquela tag.

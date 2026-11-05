@@ -119,6 +119,8 @@ function init() {
   let W = 1, H = 1, viewH = 1, viewW = 1;
   const layout = { h: 0.27, key: 0.17 };
   const heroPos = new THREE.Vector3(), headPos = new THREE.Vector3(), lockPos = new THREE.Vector3(); let headH = 0.1;
+  // a etiqueta "Abrir o cardápio" acompanha a ponta da chave quando ela flutua e balança
+  const tagFollow = document.querySelector('.keycta__follow'), tagBase = { x: 0, y: 0 }, anchor = new THREE.Vector3();
   const toWorld = (sx, sy, out) => out.set((sx / W - 0.5) * viewW, (0.5 - sy / H) * viewH, 0);
   function measureHeader() {
     const r = brandLogo.getBoundingClientRect();
@@ -135,6 +137,7 @@ function init() {
     const kx = num('--key-x', W / 2), ky = num('--key-y', H * 0.4), kh = num('--key-h', H * 0.27);
     const lx = num('--lock-x', W / 2), ly = num('--lock-y', H / 2), lk = num('--lock-k', H * 0.17);
     layout.h = kh / H; layout.key = lk / H;
+    tagBase.x = kx; tagBase.y = ky + kh / 2; // onde a etiqueta fica pendurada, com a chave parada
     toWorld(kx, ky, heroPos); toWorld(lx, ly, lockPos);
     measureHeader();
   }
@@ -202,6 +205,13 @@ function init() {
     logoPivot.rotation.set(lerp(heroRx, 0, a) * (1 - ex), lerp(heroRy, keyRy, a) * (1 - ex), lerp(Math.sin(t * 0.5) * 0.04, 0, a) - (Math.PI / 2) * turn * (1 - ex));
     logoPivot.scale.setScalar(Math.max(0.0001, size * intro.k));
     logoMat.color.copy(brass).lerp(headCol, smooth(seg(P, 0.72, 0.86)));
+    if (tagFollow && P < 0.12) {
+      logoPivot.updateMatrixWorld(); camera.updateMatrixWorld();
+      anchor.set(0, -0.5, 0).applyMatrix4(logoPivot.matrixWorld).project(camera);
+      const sx = ((anchor.x + 1) / 2) * W, sy = ((1 - anchor.y) / 2) * H;
+      tagFollow.style.setProperty('--tx', (sx - tagBase.x).toFixed(1) + 'px');
+      tagFollow.style.setProperty('--ty', (sy - tagBase.y).toFixed(1) + 'px');
+    }
 
     for (const p of parts) {
       p.y -= p.fall * dt * 0.12 - wind * 0.02;

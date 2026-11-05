@@ -54,7 +54,6 @@
       <symbol id="i-wa" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 20l1.3-3.9A8 8 0 1 1 8 19z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-1 .8a4 4 0 0 1-1.8-1.8l.8-1-1-2z" stroke-width="1.4"/></g></symbol>
       <symbol id="i-copy" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2.5"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></g></symbol>
       <symbol id="i-play" viewBox="0 0 24 24"><path fill="currentColor" d="M8 5.6v12.8a1 1 0 0 0 1.53.85l10.2-6.4a1 1 0 0 0 0-1.7L9.53 4.75A1 1 0 0 0 8 5.6z"/></symbol>
-      <symbol id="i-key" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="4.5"/><path d="M10.7 12.3 20 3m-3.2 3.2 2.7 2.7M14.2 8.8l2 2"/></g></symbol>
       <symbol id="i-mail" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m4 7 8 6 8-6"/></g></symbol>
     </defs>
   </svg>
@@ -81,7 +80,7 @@
       <a href="#novidades">Novidades</a>
       <a href="#cardapio">Cardápio</a>
       <a href="#galeria">Galeria</a>
-      <a href="#visite">Visite</a>
+      <a href="#visite">Como chegar?</a>
     </nav>
     <div class="hdr__actions">
       <button class="iconbtn searchbtn" type="button" data-open-search aria-label="Buscar no cardápio">
@@ -135,7 +134,21 @@
         <div class="gate__pulse" aria-hidden="true"></div>
         <canvas class="hero__gl" id="heroGL" aria-hidden="true"></canvas>
         <div class="hero__fallback" aria-hidden="true"><svg><use href="#logo"/></svg></div>
-        <div class="keycta"><a class="keycta__btn" href="#cardapio" data-open-menu><svg aria-hidden="true"><use href="#i-key"/></svg><span>Abrir o cardápio</span></a></div>
+        <!-- etiqueta de chaveiro pendurada na chave: o botão de abrir -->
+        <div class="keycta"><div class="keycta__follow">
+          <a class="keytag" href="#cardapio" data-open-menu>
+            <span class="keytag__cord" aria-hidden="true"></span>
+            <span class="keytag__card">
+              <svg class="keytag__paper" viewBox="0 0 124 94" preserveAspectRatio="none" aria-hidden="true">
+                <defs><linearGradient id="tagPaper" x1="0" y1="0" x2="0.35" y2="1"><stop offset="0" stop-color="#f6eed6"/><stop offset="1" stop-color="#e9dcb8"/></linearGradient></defs>
+                <path fill="url(#tagPaper)" d="M28 1h68l27 20v68a4 4 0 0 1-4 4H5a4 4 0 0 1-4-4V21z"/>
+                <path fill="none" stroke="#2b3820" stroke-opacity=".32" stroke-width="1" d="M30.4 6.5h63.2l23.9 17.6V85a3 3 0 0 1-3 3H9.5a3 3 0 0 1-3-3V24.1z"/>
+              </svg>
+              <span class="keytag__ring" aria-hidden="true"></span>
+              <span class="keytag__txt"><em>Abrir</em><span>o cardápio</span></span>
+            </span>
+          </a>
+        </div></div>
         <div class="hero__inner">
           <div class="hero__head">
             <h1 class="hero__title" aria-label="Brunch all day no coração do Ibirapuera.">
@@ -231,7 +244,7 @@
     <a href="#cardapio" data-dock="cardapio"><svg><use href="#i-menu"/></svg><span>Cardápio</span></a>
     <button type="button" class="dock__search" data-open-search aria-label="Buscar no cardápio"><svg><use href="#i-search"/></svg></button>
     <a href="#galeria" data-dock="galeria"><svg><use href="#i-image"/></svg><span>Galeria</span></a>
-    <a href="#visite" data-dock="visite"><svg><use href="#i-pin"/></svg><span>Visite</span></a>
+    <a href="#visite" data-dock="visite"><svg><use href="#i-pin"/></svg><span>Como chegar?</span></a>
   </nav>
 
   <!-- Busca -->
