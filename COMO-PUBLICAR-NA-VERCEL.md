@@ -1,6 +1,6 @@
 # Como publicar o site na Vercel (grátis)
 
-O site é 100% estático: apenas o `index.html` e a pasta `img/`. Não precisa de build nem de configuração.
+O site é 100% estático: apenas o `index.html` e as pastas `img/` e `video/` (vídeo institucional do hero). Não precisa de build nem de configuração.
 
 ## Opção 1 — Arrastar e soltar (mais fácil, sem instalar nada)
 
@@ -8,7 +8,7 @@ O site é 100% estático: apenas o `index.html` e a pasta `img/`. Não precisa d
 2. No painel, clique em **Add New… → Project**.
 3. Na parte de baixo da tela há a área **"Deploy without Git"** (ou acesse direto [vercel.com/new](https://vercel.com/new)).
 4. Arraste a pasta inteira do projeto (`acquafisiofortunata iniciandopelocursor`) para a área de upload.
-   - Importante: a pasta deve conter o `index.html` na raiz e a pasta `img/` junto.
+   - Importante: a pasta deve conter o `index.html` na raiz e as pastas `img/` e `video/` junto.
 5. Clique em **Deploy**. Em cerca de 30 segundos o site estará no ar em um endereço tipo `https://acquafisio.vercel.app`.
 
 ## Opção 2 — Pela linha de comando (Vercel CLI)
