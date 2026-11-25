@@ -34,7 +34,7 @@ No painel da Vercel: **Settings → Domains → Add** e siga as instruções par
 
 ## Trocar o vídeo do player
 
-O vídeo do botão de play fica na pasta `video/` e é definido no `index.html`, nas linhas `const VIDEO_SRC` e `const VIDEO_POSTER`. Para trocar, coloque o novo MP4 na pasta `video/` **com um nome novo** (ex.: `acqua-fisio-fortunata-v4.mp4`), aponte as duas linhas para ele e apague o arquivo antigo. O nome novo garante que ninguém continue vendo a versão anterior guardada no navegador.
+O vídeo do botão de play fica na pasta `video/` e é definido no `index.html`, nas linhas `const VIDEO_SRC` e `const VIDEO_POSTER`. Para trocar, coloque o novo MP4 na pasta `video/` **com um nome novo** (ex.: `acqua-fisio-fortunata-v5.mp4`), aponte as duas linhas para ele e apague o arquivo antigo. O nome novo garante que ninguém continue vendo a versão anterior guardada no navegador.
 
 ## Popup de promoção
 
