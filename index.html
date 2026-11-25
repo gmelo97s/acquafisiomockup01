@@ -768,8 +768,10 @@ section{scroll-margin-top:calc(var(--header-h) + 16px)}
 }
 @media(max-width:860px){
   .where-grid{grid-template-columns:1fr}
+  .where-grid>div{min-width:0}
   .map-card{aspect-ratio:4/3}
-  .addr{font-size:13.5px}
+  /* endereço continua em uma linha, mas a fonte acompanha a largura da tela para não vazar para o lado */
+  .addr{font-size:min(13.5px,2.85vw)}
 }
 @media(max-width:380px){
   .addr{white-space:normal}
@@ -813,11 +815,111 @@ footer{background:var(--ink);color:#c9c3f0;margin-top:clamp(50px,8vh,90px)}
 .float-cta.show{transform:translateY(0);opacity:1}
 @media(max-width:860px){.float-cta{display:block}}
 
+/* ============ PRÓXIMOS EVENTOS ============ */
+/* Cada evento é um <article class="ev"> dentro de .ev-list. Um evento só vira destaque (arte ao lado do texto);
+   dois ou mais viram uma grade no computador e um carrossel deslizante no celular.
+   A moldura da arte é 4:5 com fundo desfocado da própria arte, então posts quadrados, 4:5 e capas de reels (9:16) cabem iguais. */
+.eventos{background:linear-gradient(180deg,#fff,var(--mist) 24%,var(--mist) 76%,#fff)}
+.ev-list{
+  margin-top:clamp(28px,4vw,46px);
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:22px;
+}
+.ev{
+  background:#fff;border-radius:var(--radius-lg);overflow:hidden;
+  box-shadow:var(--shadow-soft);border:1px solid rgba(36,29,94,.06);
+  display:flex;flex-direction:column;
+}
+.ev-art{position:relative;aspect-ratio:4/5;overflow:hidden;background:var(--blue-deep)}
+.ev-art .ev-bg{
+  position:absolute;inset:-30px;width:calc(100% + 60px);height:calc(100% + 60px);max-width:none;
+  object-fit:cover;filter:blur(28px) saturate(1.3);opacity:.8;
+}
+.ev-art .ev-img{position:relative;z-index:1;width:100%;height:100%;object-fit:contain}
+.ev-body{padding:24px 24px 26px;display:flex;flex-direction:column;align-items:flex-start;gap:14px;flex:1}
+.ev-count{
+  font-size:11.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--orange-deep);padding:6px 12px;border-radius:999px;
+  background:linear-gradient(120deg,rgba(247,154,51,.2),rgba(239,133,20,.08));
+  border:1px solid rgba(247,154,51,.45);
+}
+.ev-count:empty{display:none}
+.ev-body h3{
+  font-size:clamp(26px,3vw,38px);font-weight:800;letter-spacing:-.025em;line-height:1.05;
+  background:linear-gradient(150deg,var(--ink) 35%,var(--blue));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.ev-facts{display:flex;flex-wrap:wrap;gap:8px;list-style:none}
+.ev-facts li{
+  display:inline-flex;align-items:center;gap:8px;padding:9px 13px;border-radius:13px;
+  background:var(--mist);border:1px solid rgba(89,195,232,.3);
+  font-size:14px;font-weight:700;color:var(--ink);
+}
+.ev-facts svg{width:17px;height:17px;stroke:var(--blue);flex-shrink:0}
+.ev-desc{font-size:15px;line-height:1.6;color:var(--ink-soft);max-width:440px}
+.ev-body .cta-btn{margin-top:auto}
+/* um único evento: destaque */
+.ev:only-child{
+  grid-column:1/-1;width:100%;max-width:980px;margin:0 auto;
+  display:grid;grid-template-columns:minmax(0,440px) minmax(0,1fr);align-items:center;
+}
+.ev:only-child .ev-body{padding:clamp(28px,4.2vw,56px);gap:16px}
+@media(max-width:860px){
+  .ev-list{
+    display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:14px;
+    margin:28px -18px 0;padding:4px 18px 20px;scrollbar-width:none;
+  }
+  .ev-list::-webkit-scrollbar{display:none}
+  .ev{flex:0 0 min(84%,340px);scroll-snap-align:center}
+  .ev:only-child{flex:1 1 100%;display:flex;max-width:520px}
+  .ev:only-child .ev-body{padding:24px 22px 26px}
+  .ev-body .cta-btn{width:100%}
+}
+
+/* ============ POPUP DE PROMOÇÃO ============ */
+.promo{
+  position:fixed;inset:0;z-index:280;
+  display:flex;align-items:center;justify-content:center;padding:16px;
+  background:rgba(12,14,42,.55);
+  backdrop-filter:blur(10px) saturate(1.2);-webkit-backdrop-filter:blur(10px) saturate(1.2);
+  opacity:0;visibility:hidden;transition:opacity .4s var(--ease-apple),visibility .4s;
+}
+.promo.open{opacity:1;visibility:visible}
+.promo-card{
+  position:relative;
+  width:min(420px,100%);
+  width:min(420px,100%,calc((100vh - 170px) * .8));
+  width:min(420px,100%,calc((100svh - 170px) * .8));
+  background:#fff;border-radius:26px;overflow:hidden;
+  box-shadow:0 40px 120px rgba(10,12,40,.55);
+  transform:scale(.9) translateY(24px);
+  transition:transform .55s var(--ease-apple);
+}
+.promo.open .promo-card{transform:none}
+.promo-art{display:block}
+.promo-art img{width:100%;height:auto;aspect-ratio:4/5}
+.promo-foot{padding:14px 16px 14px;display:flex;flex-direction:column;align-items:center;gap:8px}
+.promo-foot .cta-btn{width:100%;padding:15px 18px;font-size:15px}
+.promo-foot .cta-btn svg{width:19px;height:19px;fill:currentColor;flex-shrink:0}
+.promo-note{font-size:11.5px;color:var(--ink-soft);text-align:center}
+.promo-close{
+  position:absolute;top:12px;right:12px;z-index:2;width:42px;height:42px;border-radius:50%;
+  background:rgba(10,12,40,.55);color:#fff;font-size:17px;
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  display:flex;align-items:center;justify-content:center;
+  transition:background .25s,transform .25s;
+}
+.promo-close:hover{background:rgba(10,12,40,.8);transform:rotate(90deg)}
+@media(prefers-reduced-motion:reduce){
+  .promo-card{transform:none;transition:none}
+}
+
 /* ============ REVEAL ============ */
 .reveal{opacity:0;transform:translateY(30px);transition:opacity .8s var(--ease-apple),transform .8s var(--ease-apple)}
 .reveal-l{opacity:0;transform:translateX(-40px);transition:opacity .85s var(--ease-apple),transform .85s var(--ease-apple)}
 .reveal-r{opacity:0;transform:translateX(40px);transition:opacity .85s var(--ease-apple),transform .85s var(--ease-apple)}
 .reveal-s{opacity:0;transform:scale(.93) translateY(16px);transition:opacity .9s var(--ease-apple),transform .9s var(--ease-apple)}
+/* no celular, entrar pelos lados empurrava o conteúdo para fora da tela: entra de baixo */
+@media(max-width:860px){.reveal-l,.reveal-r{transform:translateY(30px)}}
 .reveal.in,.reveal-l.in,.reveal-r.in,.reveal-s.in{opacity:1;transform:none}
 .mod-card.reveal{
   transition:opacity .8s var(--ease-apple),transform .8s var(--ease-apple),flex 2.15s cubic-bezier(.22,.7,.2,1),box-shadow 2.15s cubic-bezier(.22,.7,.2,1);
@@ -1024,6 +1126,43 @@ footer{background:var(--ink);color:#c9c3f0;margin-top:clamp(50px,8vh,90px)}
   </div>
 </section>
 
+<!-- PRÓXIMOS EVENTOS
+  Para adicionar um evento: copie um <article class="ev"> inteiro e troque
+    data-inicio  -> dia e hora em que o evento começa (usado na contagem "Faltam X dias")
+    data-fim     -> quando o card deve sumir do site (depois do evento)
+    as duas imagens (mesmo arquivo), o título, as informações e o texto do WhatsApp.
+  A arte pode ser quadrada, 4:5 ou capa de reels (9:16). Eventos que já passaram somem sozinhos;
+  se não sobrar nenhum, a seção inteira some. -->
+<section class="sec snap eventos" id="eventos">
+  <div class="sec-in">
+    <div class="kicker k-o reveal">Agenda</div>
+    <h2 class="reveal">Próximos <span class="hl-c">eventos</span></h2>
+    <p class="sec-sub reveal">Festivais e datas especiais da Acqua. Garanta sua vaga pelo WhatsApp.</p>
+    <div class="ev-list" id="evList">
+
+      <article class="ev reveal" data-inicio="2026-12-19T09:00:00-03:00" data-fim="2026-12-20T00:00:00-03:00">
+        <div class="ev-art">
+          <img class="ev-bg" src="img/evento-festival-natacao-2026.jpg" alt="" aria-hidden="true" loading="lazy">
+          <img class="ev-img" src="img/evento-festival-natacao-2026.jpg" width="720" height="788" loading="lazy"
+               alt="Arte do Festival de Natação da Acqua Fisio Fortunata: dia 19/12, às 9h, com taxa de inscrição de R$ 20,00.">
+        </div>
+        <div class="ev-body">
+          <span class="ev-count" data-ev-count></span>
+          <h3>Festival de Natação</h3>
+          <ul class="ev-facts">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4.5" width="18" height="16.5" rx="3"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/></svg>Sábado, 19/12</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>9h</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16v4a2 2 0 0 0 0 4v4H4v-4a2 2 0 0 0 0-4z"/><path d="M13 6.5v11" stroke-dasharray="2 2.4"/></svg>Inscrição R$ 20</li>
+          </ul>
+          <p class="ev-desc">Venha mostrar seu talento, se divertir e celebrar o esporte com a gente.</p>
+          <a class="cta-btn" href="https://wa.me/5511916934719?text=Ol%C3%A1!%20Quero%20fazer%20a%20inscri%C3%A7%C3%A3o%20no%20Festival%20de%20Nata%C3%A7%C3%A3o%20do%20dia%2019%2F12." target="_blank" rel="noopener">Quero me inscrever</a>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
 <!-- AMBIENTES / TOUR VIRTUAL -->
 <section class="sec tour-sec snap" id="ambientes">
   <div class="sec-in">
@@ -1153,6 +1292,30 @@ footer{background:var(--ink);color:#c9c3f0;margin-top:clamp(50px,8vh,90px)}
 <div class="vmodal" id="vmodal" aria-hidden="true">
   <button class="close" id="vmodalClose" aria-label="Fechar vídeo">✕</button>
   <div class="frame" id="vframe"></div>
+</div>
+
+<!-- POPUP DE PROMOÇÃO (Black Friday da hidroginástica)
+  Aparece: 5 s depois que a pessoa abre o site, quando ela chega na 3ª dobra (Modalidades)
+  e quando ela demonstra que vai sair. Cada gatilho aparece no máximo uma vez por visita,
+  nunca por cima de outra janela, para de aparecer depois do clique no WhatsApp e some sozinho
+  depois do fim da promoção (configurado em PROMO, no script). -->
+<div class="promo" id="promo" aria-hidden="true">
+  <div class="promo-card" role="dialog" aria-modal="true" aria-label="Black Friday da Hidroginástica">
+    <button class="promo-close" id="promoClose" type="button" aria-label="Fechar promoção">✕</button>
+    <a class="promo-art" data-promo-cta target="_blank" rel="noopener"
+       href="https://wa.me/5511916934719?text=Ol%C3%A1!%20Vi%20a%20Black%20Friday%20da%20Hidrogin%C3%A1stica%20no%20site%20e%20quero%20fechar%20o%20plano%20de%203%20vezes%20na%20semana%20para%20fazer%204.">
+      <img src="img/promo-black-friday-hidroginastica.jpg" width="720" height="900" decoding="async"
+           alt="Black Friday da Hidroginástica: fechando o plano de 3 vezes na semana, ganhe a oportunidade de fazer 4 vezes na semana, com liberdade de dia e horário.">
+    </a>
+    <div class="promo-foot">
+      <a class="cta-btn" data-promo-cta target="_blank" rel="noopener"
+         href="https://wa.me/5511916934719?text=Ol%C3%A1!%20Vi%20a%20Black%20Friday%20da%20Hidrogin%C3%A1stica%20no%20site%20e%20quero%20fechar%20o%20plano%20de%203%20vezes%20na%20semana%20para%20fazer%204.">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Quero aproveitar no WhatsApp
+      </a>
+      <p class="promo-note">Válido para planos fechados de 20/11 a 20/12.</p>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -1285,8 +1448,8 @@ document.getElementById('verModsBtn').addEventListener('click',()=>{
 });
 
 /* ===== video facade ===== */
-const VIDEO_SRC = 'video/acqua-fisio-fortunata.mp4';
-const VIDEO_POSTER = 'video/acqua-fisio-fortunata-poster.jpg';
+const VIDEO_SRC = 'video/acqua-fisio-fortunata-v3.mp4';
+const VIDEO_POSTER = 'video/acqua-fisio-fortunata-v3-poster.jpg';
 const vmodal = document.getElementById('vmodal');
 const vframe = document.getElementById('vframe');
 function openVideo(){
@@ -1595,8 +1758,138 @@ new IntersectionObserver(([e])=>{
   floatCta.classList.toggle('show', !e.isIntersecting && !document.body.classList.contains('menu-open'));
 },{threshold:.25}).observe(hero);
 
+/* ===== próximos eventos: contagem regressiva e saída automática depois da data ===== */
+(function(){
+  const sec = document.getElementById('eventos');
+  if(!sec) return;
+  const now = Date.now();
+  sec.querySelectorAll('.ev').forEach(ev=>{
+    const fim = Date.parse(ev.dataset.fim);
+    if(!isNaN(fim) && now >= fim) ev.remove();
+  });
+  const evs = sec.querySelectorAll('.ev');
+  if(!evs.length){ sec.remove(); return; }
+  const dia = t=>{ const d = new Date(t); d.setHours(0,0,0,0); return d.getTime(); };
+  evs.forEach(ev=>{
+    const el = ev.querySelector('[data-ev-count]');
+    const ini = Date.parse(ev.dataset.inicio);
+    if(!el || isNaN(ini)) return;
+    const n = Math.round((dia(ini) - dia(now)) / 864e5);
+    el.textContent = n <= 0 ? 'É hoje!' : n === 1 ? 'É amanhã!' : `Faltam ${n} dias`;
+  });
+})();
+
+/* ===== popup de promoção =====
+   Gatilhos (cada um no máximo uma vez por visita):
+   - tempo: 5 s de site aberto e visível
+   - dobra: quando a 3ª dobra (Modalidades) entra na tela e a pessoa para nela
+   - saída: no computador, o mouse sai pela parte de cima da janela (indo para abas/fechar);
+            no celular, uma rolagem rápida para cima depois de um tempo navegando
+   Nunca abre por cima do vídeo, do menu ou de outra janela: espera ela fechar.
+   Depois do clique no WhatsApp, não aparece mais nesta visita. Depois de PROMO.fim, some do site. */
+(function(){
+  const PROMO = {
+    id: 'bf-hidro-2026',
+    fim: '2026-12-21T00:00:00-03:00',   // a promoção vale para planos fechados até 20/12
+    segundos: 5,
+    dobra: 'modalidades'
+  };
+  const promo = document.getElementById('promo');
+  if(!promo) return;
+  if(Date.now() >= Date.parse(PROMO.fim)){ promo.remove(); return; }
+
+  const closeBtn = document.getElementById('promoClose');
+  const KEY = 'promo:' + PROMO.id + ':';
+  const mem = {};
+  const store = {
+    get(k){ try{ return sessionStorage.getItem(KEY + k); }catch(e){ return mem[k] || null; } },
+    set(k, v){ mem[k] = v; try{ sessionStorage.setItem(KEY + k, v); }catch(e){} }
+  };
+  const t0 = performance.now();
+  let lastFocus = null, waiting = null, waitTimer = null;
+
+  const otherOpen = ()=>
+    document.body.classList.contains('menu-open') ||
+    document.getElementById('vmodal').classList.contains('open') ||
+    document.getElementById('dmodal').classList.contains('open');
+  const isOpen = ()=> promo.classList.contains('open');
+
+  function show(trigger){
+    if(store.get('whatsapp') === '1' || store.get(trigger) === '1' || isOpen()) return;
+    if(otherOpen() || document.hidden){ waitFor(trigger); return; }
+    store.set(trigger, '1');
+    lastFocus = document.activeElement;
+    promo.classList.add('open');
+    promo.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    setTimeout(()=>closeBtn.focus({preventScroll:true}), 80);
+  }
+  // espera a outra janela fechar (ou a aba voltar a ficar visível) e mostra 1,2 s depois
+  function waitFor(trigger){
+    if(waiting) return;
+    waiting = trigger;
+    waitTimer = setInterval(()=>{
+      if(otherOpen() || document.hidden) return;
+      clearInterval(waitTimer);
+      const t = waiting; waiting = null;
+      setTimeout(()=>show(t), 1200);
+    }, 600);
+  }
+  function hide(){
+    if(!isOpen()) return;
+    promo.classList.remove('open');
+    promo.setAttribute('aria-hidden', 'true');
+    if(!otherOpen()) document.body.style.overflow = '';
+    if(lastFocus && lastFocus.focus) lastFocus.focus({preventScroll:true});
+  }
+
+  closeBtn.addEventListener('click', hide);
+  promo.addEventListener('click', e=>{ if(e.target === promo) hide(); });
+  promo.querySelectorAll('[data-promo-cta]').forEach(a=>a.addEventListener('click', ()=>{
+    store.set('whatsapp', '1');
+    setTimeout(hide, 300);
+  }));
+  document.addEventListener('keydown', e=>{
+    if(!isOpen()) return;
+    if(e.key === 'Escape'){ hide(); return; }
+    if(e.key === 'Tab'){   // mantém o foco dentro do popup
+      const f = [...promo.querySelectorAll('button,a[href]')];
+      const first = f[0], last = f[f.length - 1];
+      if(e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+      else if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+    }
+  });
+
+  // 1) tempo
+  setTimeout(()=>show('tempo'), PROMO.segundos * 1000);
+
+  // 2) 3ª dobra: dispara quando o topo da seção passa de 60% da tela e a pessoa fica nela por 0,7 s
+  const dobra = document.getElementById(PROMO.dobra);
+  if(dobra && 'IntersectionObserver' in window){
+    let dwell = null;
+    new IntersectionObserver(([e])=>{
+      clearTimeout(dwell);
+      if(e.isIntersecting) dwell = setTimeout(()=>show('dobra'), 700);
+    }, {rootMargin:'0px 0px -40% 0px'}).observe(dobra);
+  }
+
+  // 3) intenção de saída
+  if(matchMedia('(hover:hover) and (pointer:fine)').matches){
+    document.addEventListener('mouseout', e=>{
+      if(!e.relatedTarget && e.clientY <= 8 && performance.now() - t0 > 3000) show('saida');
+    });
+  } else {
+    let lastY = scrollY, lastT = performance.now();
+    addEventListener('scroll', ()=>{
+      const now = performance.now(), y = scrollY, dt = now - lastT;
+      if(dt > 0 && dt < 150 && (lastY - y) / dt > 2.2 && y > innerHeight && now - t0 > 8000) show('saida');
+      lastY = y; lastT = now;
+    }, {passive:true});
+  }
+})();
+
 /* ===== reveal on scroll (com stagger em grupos) ===== */
-document.querySelectorAll('.turmas-grid,.mod-cards,.acc-list').forEach(g=>{
+document.querySelectorAll('.turmas-grid,.mod-cards,.acc-list,.ev-list').forEach(g=>{
   [...g.children].forEach((c,i)=>{c.style.transitionDelay=(i*80)+'ms';c.dataset.stagger='1';});
 });
 const ro = new IntersectionObserver(entries=>{

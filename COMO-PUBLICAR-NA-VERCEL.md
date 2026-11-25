@@ -34,7 +34,22 @@ No painel da Vercel: **Settings → Domains → Add** e siga as instruções par
 
 ## Trocar o vídeo do player
 
-O vídeo do botão de play está definido no `index.html`, na linha com `const YT_ID = 'FgHfq2PvKqM'`. Troque apenas o código entre aspas pelo ID do seu vídeo do YouTube (o trecho depois de `watch?v=` na URL).
+O vídeo do botão de play fica na pasta `video/` e é definido no `index.html`, nas linhas `const VIDEO_SRC` e `const VIDEO_POSTER`. Para trocar, coloque o novo MP4 na pasta `video/` **com um nome novo** (ex.: `acqua-fisio-fortunata-v4.mp4`), aponte as duas linhas para ele e apague o arquivo antigo. O nome novo garante que ninguém continue vendo a versão anterior guardada no navegador.
+
+## Popup de promoção
+
+O popup (hoje, a Black Friday da hidroginástica) fica no `index.html`, no bloco `<!-- POPUP DE PROMOÇÃO -->`, e as regras ficam no script, em `const PROMO`:
+
+- `fim`: data em que o popup some sozinho do site.
+- `segundos`: quanto tempo depois de abrir o site ele aparece.
+- `dobra`: a seção que dispara o popup quando a pessoa chega nela.
+- `id`: troque sempre que trocar a promoção, para o popup voltar a aparecer para todo mundo.
+
+Para uma promoção nova, troque a arte (`img/`), o texto do WhatsApp nos dois links `data-promo-cta`, a frase de validade e o `PROMO`. Para testar de novo depois de já ter visto o popup, abra o site em uma aba anônima.
+
+## Próximos eventos
+
+Os eventos ficam no bloco `<!-- PRÓXIMOS EVENTOS -->`. Cada evento é um `<article class="ev">`: copie um inteiro, troque a arte, o título, as informações, o texto do WhatsApp e as datas `data-inicio` (começo do evento) e `data-fim` (quando o card deve sumir). Funciona com arte quadrada, 4:5 ou capa de reels (9:16). Eventos passados somem sozinhos e, sem eventos futuros, a seção inteira some.
 
 ## Trocar a foto da fachada
 
