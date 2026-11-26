@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://acquafisiofortunata.com.br/sitemap.xml
